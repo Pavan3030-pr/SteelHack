@@ -5,8 +5,10 @@ import {
   RefreshCw,
   Sliders,
   FileCode,
+  FileText,
   Image as ImageIcon,
   CheckCircle,
+  Coins,
   AlertTriangle,
   Play,
   Terminal,
@@ -32,9 +34,19 @@ import {
   Info,
   Flame,
   Wrench,
-  Gauge
+  Gauge,
+  Tv,
+  Video,
+  Leaf
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import DigitalTwin from "./components/DigitalTwin";
+import RoiAnalytics from "./components/RoiAnalytics";
+import FactoryControlCenter from "./components/FactoryControlCenter";
+import IndustrialReportGenerator from "./components/IndustrialReportGenerator";
+import NeuTrainingHub from "./components/NeuTrainingHub";
+import LiveInferenceStation from "./components/LiveInferenceStation";
+import SustainAnalytics from "./components/SustainAnalytics";
 
 // ==============================================================================
 // 1. DATA AND STATIC CONTRACTS
@@ -90,6 +102,128 @@ const DEFECT_CLASSES = [
     patternDesc: "Sharp longitudinal lines with highly directional gradient orientations."
   }
 ];
+
+const DEFECT_DIAGNOSTICS: Record<string, {
+  scienceExplanation: string;
+  causes: { factor: string; probability: number }[];
+  recommendations: string[];
+  correctiveActions: string[];
+}> = {
+  scratches: {
+    scienceExplanation: "Scratches are mechanical scores caused by solid surface sliding contact. In hot rolling, high shearing forces tear material away locally if guide plates or looper bearings seize. This creates longitudinal lines aligned with the roll path. Mechanical metal-on-metal sliding exceeds the material's shear yield limit.",
+    causes: [
+      { factor: "Seized Spherical Roller Bearings at Stand 4 Guide Desk", probability: 88 },
+      { factor: "Weld-buildup/debris accumulation on shearing runout slide plate", probability: 74 },
+      { factor: "Uncompensated tension spike causing excessive strip-looper friction", probability: 55 }
+    ],
+    recommendations: [
+      "Verify radial bearing clearance on guide Stand 4 looper assemblies.",
+      "Initiate manual physical cleanout of debris on shear slide paths.",
+      "Re-calibrate speed differential tension control modules to limit friction drag."
+    ],
+    correctiveActions: [
+      "Halt manual guide tension feedback sequence",
+      "Inject lubrication grease to Stand 4 ball bearings",
+      "Reset looper Level-2 gain parameters to safe margins",
+      "Examine guide plate alignment using laser distance calibration"
+    ]
+  },
+  crazing: {
+    scienceExplanation: "Crazing represents a dense pattern of micro-fissures resembling spiderweb cracks. It stems from roll-surface thermal fatigue or 'heat crazing'. As rolls repeatedly alternate from hot slab contact (~1000°C) to direct water sprays (~40°C), severe thermal shock gradients exceed the elastic strain limit of high-alloy mill surfaces, causing microscopic tension fractures that imprint on the strip.",
+    causes: [
+      { factor: "High work-roll thermal fatigue from uneven water descaling", probability: 84 },
+      { factor: "Heavy roll mechanical friction under high compression sequences", probability: 61 },
+      { factor: "Insufficient coolant pressure on roll-surface thermal boundary", probability: 49 }
+    ],
+    recommendations: [
+      "Perform high-resolution ultrasonic validation of active work rolls.",
+      "Calibrate water header spraying angles to prevent thermal shadowzones.",
+      "Schedule immediate roll surface grinding down to a 0.20mm recovery depth."
+    ],
+    correctiveActions: [
+      "Trigger water cooling nozzle high-pressure flush sequence",
+      "Deploy secondary descaler manifold to suppress delta-temperatures",
+      "Reduce rolling mill speed by 15% to buffer shock sequences",
+      "Record active roll temperature profile using thermo-scanner"
+    ]
+  },
+  inclusion: {
+    scienceExplanation: "Inclusions are trapped non-metallic particulate clusters (mostly alumina, slag, or silicates) that become embedded during continuous solidification. During subsequent high-pressure reduction passes, these pockets fail to deform cohesively with the steel matrix, opening micro-voids along grain boundaries and posing severe catastrophic structural failure risks.",
+    causes: [
+      { factor: "Ladle shroud sand/refractory lining disintegration during casting", probability: 91 },
+      { factor: "Incomplete liquid steel slag separation in the tundish weir", probability: 76 },
+      { factor: "Excessive aluminum deoxidation depletions creating float aggregates", probability: 58 }
+    ],
+    recommendations: [
+      "Calibrate mold slag sensing level meters in continuous casting bay.",
+      "Replace physical argon bubbling purge plugs on the shroud manifold.",
+      "Schedule immediate chemical titration of feed ladle samples."
+    ],
+    correctiveActions: [
+      "Toggle continuous casting tundish auto-shroud shutoff block",
+      "Execute argon gas purging sequence in active transfer tube",
+      "Divert current slab segment to scrap salvage bay",
+      "Elevate ladle reheat furnace profile to 1545°C to liquefy slag"
+    ]
+  },
+  patches: {
+    scienceExplanation: "Patches represent irregular broad discolorations or scale layers on the warm coil surface. These appear when the rolling strip undergoes uneven oxidation, combined with coolant mist evaporation, producing patches of magnetite/hematite of unequal thickness, creating friction resistance variances and low aesthetic values.",
+    causes: [
+      { factor: "Water descaler header pressure drops under high mill speeds", probability: 78 },
+      { factor: "Localized rolling lubricant breakdown causing micro-welding", probability: 64 },
+      { factor: "Uneven cooling across width from misaligned spray-header nozzles", probability: 51 }
+    ],
+    recommendations: [
+      "Measure pressure gradients on all high-yield descaler manifolds.",
+      "Clean out water-jet filtration screens to clear physical corrosion scale.",
+      "Adjust spray block overlap coordinates to ensure flat water distribution."
+    ],
+    correctiveActions: [
+      "Deploy descaling pump high-pressure flush sequence",
+      "Replace worn carbide nozzle components on spray block 3",
+      "Apply dry-film roll lubricant to strip-entry tables",
+      "Initiate localized pyrometer scan across strip width"
+    ]
+  },
+  pitted_surface: {
+    scienceExplanation: "Pitting occurs when tiny particulate iron scale becomes trapped under the work rolls and is forcibly pulled out during cold reduction, leaving cavities. Alternatively, chemical pitted craters occur when pickling line acid solutions exceed specified acid concentration limits or fail to rinse evenly, resulting in localized electrochemical corrosion.",
+    causes: [
+      { factor: "Pickle acid HCl concentrations exceeding standard limits", probability: 82 },
+      { factor: "Debris feedback transfer from secondary rollers", probability: 69 },
+      { factor: "Neutralizing bath PH drift leading to electrochemical pitting", probability: 45 }
+    ],
+    recommendations: [
+      "Perform a double-titration diagnostic of hydrochloric acid baths.",
+      "Wipe clean dry rollers using magnetic scraper scrap plates.",
+      "Recirculate neutralizing rinse water to clear chemical salt carryovers."
+    ],
+    correctiveActions: [
+      "Increase neutralization water pump speed by 20%",
+      "Wipe guide Roller Stand 3 with magnetic separator bars",
+      "Acquire pickle bath acid titration flask samples",
+      "Calibrate rinse bath pH meter to exactly 7.2"
+    ]
+  },
+  rolled_in_scale: {
+    scienceExplanation: "Rolled-in scale is a surface defect formed when the primary scale layer generated on hot slabs is not fully fractured or swept away prior to reduction. The mill rolls turn this solid scale oxide into a hard shell and press it directly into the steel matrix, producing dark, flaky depressions that weaken corrosion resistance.",
+    causes: [
+      { factor: "Scale scraper blade mechanical friction and spring-slack fatigue", probability: 85 },
+      { factor: "Combustion gas imbalance creating excessive oxygen atmosphere in furnace", probability: 71 },
+      { factor: "Low impact kinetic energy of descaling spray jets", probability: 60 }
+    ],
+    recommendations: [
+      "Replace mechanical steel brush assemblies on furnace exit sliders.",
+      "Re-tune furnace gas-to-air burners to establish a protective reducing gas atmosphere.",
+      "Test descaling high pressure pump velocity outputs against ASTM spec standards."
+    ],
+    correctiveActions: [
+      "Boost active descaling header bar pressure to 180 Bar",
+      "Calibrate furnace burner stoichiometry to under 1.2% O2 boundary",
+      "Adjust backing spring pressure on scrapers to 240 Newtons",
+      "Sweep loose scale flakes from slab edges via auxiliary air-knives"
+    ]
+  }
+};
 
 const CODE_MODULES = [
   {
@@ -429,8 +563,8 @@ const INITIAL_SCANS = [
 export default function App() {
   // Navigation tabs matching EXACT user intent: 5 items
   const [activeTab, setActiveTab] = useState<
-    "dashboard" | "analytics" | "history" | "architecture" | "deployment"
-  >("dashboard");
+    "control" | "dashboard" | "analytics" | "history" | "architecture" | "deployment" | "twin" | "roi" | "reports" | "training" | "inference" | "sustainability"
+  >("control");
 
   // Filter criteria for monitoring log tab
   const [searchTerm, setSearchTerm] = useState("");
@@ -484,6 +618,676 @@ export default function App() {
   // Command input simulation inside Devops terminal
   const [apiCommandResult, setApiCommandResult] = useState<any>(null);
   const [apiTesting, setApiTesting] = useState(false);
+
+  // Explainable AI (XAI) State variables
+  const [showOriginal, setShowOriginal] = useState(true);
+  const [showBoundingBoxes, setShowBoundingBoxes] = useState(true);
+  const [showHeatmap, setShowHeatmap] = useState(true);
+  const [heatmapAlpha, setHeatmapAlpha] = useState(0.55);
+  const [resnetLayer, setResnetLayer] = useState<"Conv5_x" | "Conv4_x" | "Conv3_x">("Conv5_x");
+  const [attentionCenter, setAttentionCenter] = useState({ x: 200, y: 180 });
+
+  // Predictive Industrial Analytics & Maintenance Engine States
+  const [lineStrain, setLineStrain] = useState(42); 
+  const [motorTemp, setMotorTemp] = useState(72);
+  const [coolingForce, setCoolingForce] = useState(85);
+  const [pdmRollingSpeed, setPdmRollingSpeed] = useState(12.4);
+  const [historicalDefects, setHistoricalDefects] = useState([
+    { day: "Mon", crazing: 12, scratches: 18, inclusion: 5, pitted: 8, scale: 9, total: 52 },
+    { day: "Tue", crazing: 15, scratches: 16, inclusion: 7, pitted: 12, scale: 11, total: 61 },
+    { day: "Wed", crazing: 11, scratches: 22, inclusion: 4, pitted: 10, scale: 8, total: 55 },
+    { day: "Thu", crazing: 9, scratches: 14, inclusion: 8, pitted: 15, scale: 13, total: 59 },
+    { day: "Fri", crazing: 16, scratches: 25, inclusion: 6, pitted: 9, scale: 15, total: 71 },
+    { day: "Sat", crazing: 14, scratches: 19, inclusion: 3, pitted: 7, scale: 8, total: 51 },
+    { day: "Sun", crazing: 10, scratches: 12, inclusion: 2, pitted: 6, scale: 5, total: 35 },
+  ]);
+
+  const [activeAnomalies, setActiveAnomalies] = useState([
+    { id: "PANOM-09", component: "Roller Bearing Stand 4", severity: "HIGH", probability: 88, details: "Micro-vibration frequency shift detected in lower roller casing.", status: "Active", time: "2 hours ago" },
+    { id: "PANOM-10", component: "Water Descaling Spray Nozzle A4", severity: "MED", probability: 64, details: "Partial fluid flow reduction sensed, leading to scale hazard.", status: "Active", time: "5 hours ago" },
+    { id: "PANOM-11", component: "Hydraulic Tensioning Cylinder 2", severity: "LOW", probability: 35, details: "Minor pressure oscillation under heavy load sequences.", status: "Resolved", time: "Yesterday" }
+  ]);
+
+  // Derived predictive maintenance metrics
+  const machineHealthScore = useMemo(() => {
+    let health = 100;
+    if (lineStrain > 40) {
+      health -= (lineStrain - 40) * 0.6;
+    }
+    if (motorTemp > 65) {
+      health -= (motorTemp - 65) * 0.7;
+    }
+    if (coolingForce < 80) {
+      health -= (80 - coolingForce) * 0.8;
+    } else if (coolingForce > 95) {
+      health -= (coolingForce - 95) * 0.4;
+    }
+    if (pdmRollingSpeed > 12) {
+      health -= (pdmRollingSpeed - 12) * 2.5;
+    }
+    return Math.max(5, Math.min(100, Math.round(health)));
+  }, [lineStrain, motorTemp, coolingForce, pdmRollingSpeed]);
+
+  const failureProbability = useMemo(() => {
+    const p = Math.round((100 - machineHealthScore) * 1.05);
+    return Math.max(2, Math.min(98, p));
+  }, [machineHealthScore]);
+
+  const defectTrendGrowth = useMemo(() => {
+    const base = ((100 - machineHealthScore) / 4.2) - 5;
+    return parseFloat(base.toFixed(1));
+  }, [machineHealthScore]);
+
+  const machineAlertStatus = useMemo(() => {
+    if (machineHealthScore >= 82) return "GREEN";
+    if (machineHealthScore >= 62) return "YELLOW";
+    return "RED";
+  }, [machineHealthScore]);
+
+  const forecastMultiplier = useMemo(() => {
+    return 1 + (100 - machineHealthScore) / 38;
+  }, [machineHealthScore]);
+
+  // AI-powered Root Cause Decision Support system states & memos
+  const [checkedInterventions, setCheckedInterventions] = useState<Record<string, boolean>>({});
+
+  const calculatedSeverityClass = useMemo(() => {
+    const score = selectedClass.baseSeverity;
+    if (selectedClass.name === "None (OK)" || selectedClass.name.includes("None")) {
+      return { 
+        label: "NOMINAL", 
+        color: "text-emerald-400 bg-emerald-950/40 border-emerald-950/50", 
+        badgeBg: "bg-emerald-500/10",
+        percentage: 0 
+      };
+    }
+    if (score < 15) {
+      return { 
+        label: "LOW SEVERITY", 
+        color: "text-cyan-400 bg-cyan-950/20 border-cyan-800/30", 
+        badgeBg: "bg-cyan-500/10",
+        percentage: score 
+      };
+    }
+    if (score < 25) {
+      return { 
+        label: "MODERATE SEVERITY", 
+        color: "text-amber-500 bg-amber-950/20 border-amber-800/30", 
+        badgeBg: "bg-amber-500/10",
+        percentage: score 
+      };
+    }
+    return { 
+      label: "CRITICAL SEVERITY", 
+      color: "text-red-400 bg-red-950/45 border-red-900/40", 
+      badgeBg: "bg-red-500/10 animate-pulse",
+      percentage: score 
+    };
+  }, [selectedClass]);
+
+  const automaticOperatorRecommendation = useMemo(() => {
+    if (selectedClass.name === "None (OK)" || selectedClass.name.includes("None")) {
+      return `[AUTOPILOT COGNITIVE REPORT]: Current rolling-stand sequences are operating under optimal mechanical configurations. Calculated line load at speed ${pdmRollingSpeed} m/s and cooling jet pressure at ${coolingForce} PSI are aligned with ASTM-A36 compliance curves. Continue scheduled casting line telemetry sweep.`;
+    }
+
+    let text = `[DECISION-SUPPORT INSIGHT]: Dynamic classification model confirmed a ${calculatedSeverityClass.label} hazard state for defect '${selectedClass.name}'. `;
+    
+    // Custom recommendation based on live simulator gauges
+    if (lineStrain > 60) {
+      text += `The active Line Strain coeff is extremely high at ${lineStrain}%, causing continuous heavy strip deflection. This elevates mechanical sliding friction with guide Stand 4 rollers, multiplying scratch occurrences. Damping line strain below 30% is highly recommended. `;
+    } else {
+      text += `Line strain coefficient is within normal bounds (${lineStrain}%), indicating the physical defect triggers stem from localized roller scaling or chemical pickling drifts. `;
+    }
+
+    if (motorTemp > 75) {
+      text += `Severe Motor Core overheating detected (${motorTemp}°C). This triggers thermal dimensional growth on hot reducers, accelerating surface micro-crazing and flaking along material boundaries. Initiate an immediate high-pressure scale descaling jet flush. `;
+    } else if (coolingForce < 75) {
+      text += `Insufficient cooling manifold spray pressure registered at ${coolingForce} PSI. The oxide protective barrier is failing to scale-off cleanly. Inclusions and scale pits will continue to propagate. Trigger cooling jet descaler immediately. `;
+    } else {
+      text += `Sub-system temperatures (${motorTemp}°C) and water spray pressure parameters (${coolingForce} PSI) are within designated margins. `;
+    }
+
+    if (pdmRollingSpeed > 15) {
+      text += `The hot strip line is operating at high load speed (${pdmRollingSpeed} m/s), setting off micro-vibrations across structural bearings. Retarding linespeed to under 12 m/s will preserve roll roll-alignment geometry. `;
+    }
+
+    text += `\n\n[RECOMMENDED OPERATOR STEPS]: Engage the targeted fault control interventions listed in the Decision-Support checklist below immediately.`;
+    return text;
+  }, [selectedClass, lineStrain, motorTemp, coolingForce, pdmRollingSpeed, calculatedSeverityClass]);
+
+  // DRAW PRESET VECTORS TO CANVAS
+  const drawPresetVectorsToCanvas = (ctx: CanvasRenderingContext2D, classId: string, stage: "raw" | "processed" | "highlighted") => {
+    const isRaw = stage === "raw";
+    const isProcessed = stage === "processed";
+    const isHigh = stage === "highlighted";
+
+    const color = isHigh ? "#ef4444" : "#475569";
+    const lineWidth = isRaw ? 1.5 : 2.5;
+
+    ctx.strokeStyle = color;
+    ctx.fillStyle = isHigh ? "rgba(239, 68, 68, 0.15)" : "rgba(71, 85, 105, 0.2)";
+    ctx.lineWidth = lineWidth;
+
+    switch (classId) {
+      case "crazing": {
+        ctx.beginPath();
+        ctx.moveTo(80, 100); ctx.lineTo(95, 120); ctx.lineTo(100, 105); ctx.lineTo(120, 110);
+        ctx.lineTo(115, 130); ctx.lineTo(140, 115); ctx.lineTo(125, 145); ctx.lineTo(150, 150);
+        ctx.lineTo(160, 135);
+        ctx.moveTo(100, 105); ctx.lineTo(115, 90); ctx.lineTo(130, 100);
+        ctx.moveTo(125, 145); ctx.lineTo(110, 165);
+        ctx.moveTo(150, 150); ctx.lineTo(180, 155); ctx.lineTo(190, 140);
+        ctx.moveTo(140, 115); ctx.lineTo(170, 100); ctx.lineTo(180, 120); ctx.lineTo(220, 110);
+        ctx.moveTo(220, 240); ctx.lineTo(235, 260); ctx.lineTo(240, 245); ctx.lineTo(260, 250);
+        ctx.lineTo(255, 270); ctx.lineTo(280, 255); ctx.lineTo(265, 285);
+        ctx.stroke();
+        break;
+      }
+      case "inclusion": {
+        ctx.beginPath(); ctx.arc(160, 180, 16, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.arc(180, 195, 12, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.ellipse?.(140, 205, 8, 14, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = isHigh ? "rgba(239, 68, 68, 0.35)" : "rgba(30, 41, 59, 0.5)";
+        ctx.strokeStyle = isHigh ? "#ef4444" : "#475569";
+        ctx.beginPath(); ctx.arc(210, 160, 18, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        break;
+      }
+      case "patches": {
+        ctx.beginPath();
+        ctx.moveTo(120, 130);
+        ctx.quadraticCurveTo(180, 80, 250, 140);
+        ctx.quadraticCurveTo(285, 180, 320, 220);
+        ctx.quadraticCurveTo(220, 290, 140, 240);
+        ctx.quadraticCurveTo(130, 185, 120, 130);
+        ctx.closePath();
+        ctx.fill(); ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(50, 50);
+        ctx.quadraticCurveTo(80, 40, 100, 80);
+        ctx.quadraticCurveTo(110, 100, 120, 120);
+        ctx.quadraticCurveTo(70, 120, 40, 90);
+        ctx.quadraticCurveTo(45, 70, 50, 50);
+        ctx.closePath();
+        ctx.fill(); ctx.stroke();
+        break;
+      }
+      case "pitted_surface": {
+        const pits = [
+          { cx: 100, cy: 120, r: 3 }, { cx: 105, cy: 115, r: 2.5 }, { cx: 115, cy: 122, r: 4 },
+          { cx: 250, cy: 220, r: 3 }, { cx: 260, cy: 235, r: 4.5 }, { cx: 245, cy: 240, r: 2.5 },
+          { cx: 270, cy: 225, r: 3 }, { cx: 180, cy: 150, r: 4 }, { cx: 190, cy: 155, r: 3 },
+          { cx: 150, cy: 280, r: 3.5 }, { cx: 140, cy: 272, r: 2 }, { cx: 158, cy: 275, r: 4.5 }
+        ];
+        pits.forEach(p => {
+          ctx.beginPath();
+          if (isHigh && p.cx === 158) {
+            ctx.fillStyle = "#ef4444";
+            ctx.arc(p.cx, p.cy, p.r + 1, 0, Math.PI * 2);
+          } else {
+            ctx.fillStyle = color;
+            ctx.arc(p.cx, p.cy, p.r, 0, Math.PI * 2);
+          }
+          ctx.fill();
+        });
+        break;
+      }
+      case "rolled_in_scale": {
+        ctx.beginPath();
+        ctx.moveTo(100, 100); ctx.bezierCurveTo(120, 120, 120, 140, 100, 160);
+        ctx.moveTo(120, 110); ctx.bezierCurveTo(140, 130, 140, 150, 120, 170);
+        ctx.moveTo(140, 120); ctx.bezierCurveTo(160, 140, 160, 160, 140, 180);
+        ctx.moveTo(220, 200); ctx.bezierCurveTo(240, 220, 240, 240, 220, 260);
+        ctx.moveTo(240, 210); ctx.bezierCurveTo(260, 230, 260, 250, 240, 270);
+        ctx.moveTo(260, 220); ctx.bezierCurveTo(280, 240, 280, 260, 260, 280);
+        ctx.stroke();
+        break;
+      }
+      case "scratches": {
+        ctx.beginPath();
+        ctx.moveTo(80, 120); ctx.lineTo(300, 150);
+        ctx.moveTo(90, 135); ctx.lineTo(280, 160);
+        ctx.moveTo(150, 220); ctx.lineTo(340, 245);
+        ctx.stroke();
+        break;
+      }
+    }
+  };
+
+  // GRAD-CAM CORE HOTSPOT generator
+  const drawHeatmapHotspot = (ctx: CanvasRenderingContext2D, cx: number, cy: number, layer: string, intensityMultiplier = 1.0) => {
+    ctx.save();
+    ctx.globalCompositeOperation = "screen";
+    ctx.globalAlpha = heatmapAlpha * intensityMultiplier;
+
+    let rInner = 15;
+    let rOuter = 70;
+    if (layer === "Conv4_x") {
+      rInner = 35;
+      rOuter = 130;
+    } else if (layer === "Conv3_x") {
+      rInner = 70;
+      rOuter = 220;
+    }
+
+    const radGrad = ctx.createRadialGradient(cx, cy, rInner * 0.1, cx, cy, rOuter);
+    radGrad.addColorStop(0.0, "rgba(239, 68, 68, 0.95)");
+    radGrad.addColorStop(0.15, "rgba(249, 115, 22, 0.85)");
+    radGrad.addColorStop(0.35, "rgba(234, 179, 8, 0.6)");
+    radGrad.addColorStop(0.55, "rgba(34, 197, 94, 0.35)");
+    radGrad.addColorStop(0.75, "rgba(59, 130, 246, 0.15)");
+    radGrad.addColorStop(1.0, "rgba(0, 0, 0, 0)");
+
+    ctx.fillStyle = radGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, rOuter, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  };
+
+  // DRAW SELECTED HEATMAPS
+  const drawHeatmapsForClass = (ctx: CanvasRenderingContext2D, classId: string, layer: string) => {
+    if (customImage) {
+      drawHeatmapHotspot(ctx, attentionCenter.x, attentionCenter.y, layer, 1.0);
+      drawHeatmapHotspot(ctx, attentionCenter.x + 35, attentionCenter.y - 25, layer, 0.4);
+      return;
+    }
+
+    switch (classId) {
+      case "crazing":
+        drawHeatmapHotspot(ctx, 120, 110, layer, 0.9);
+        drawHeatmapHotspot(ctx, 250, 260, layer, 0.7);
+        break;
+      case "inclusion":
+        drawHeatmapHotspot(ctx, 210, 160, layer, 1.0);
+        drawHeatmapHotspot(ctx, 160, 180, layer, 0.5);
+        break;
+      case "patches":
+        drawHeatmapHotspot(ctx, 220, 180, layer, 1.0);
+        break;
+      case "pitted_surface":
+        drawHeatmapHotspot(ctx, 158, 275, layer, 1.0);
+        drawHeatmapHotspot(ctx, 110, 120, layer, 0.55);
+        drawHeatmapHotspot(ctx, 250, 220, layer, 0.45);
+        break;
+      case "rolled_in_scale":
+        drawHeatmapHotspot(ctx, 120, 140, layer, 0.85);
+        drawHeatmapHotspot(ctx, 250, 240, layer, 0.82);
+        break;
+      case "scratches":
+        drawHeatmapHotspot(ctx, 190, 135, layer, 1.0);
+        drawHeatmapHotspot(ctx, 240, 230, layer, 0.6);
+        break;
+    }
+  };
+
+  // MAIN OVERLAY DRAWER
+  const drawOverlays = (ctx: CanvasRenderingContext2D, w: number, h: number) => {
+    const isOk = selectedClass.name === "None (OK)" || selectedClass.name.includes("None");
+
+    // A. HEATMAPS
+    if (showHeatmap && !isOk && !scanInProgress) {
+      drawHeatmapsForClass(ctx, selectedClass.id, resnetLayer);
+    }
+
+    // B. ORIGINAL DEFECT VECTORS HIGHLIGHT (GLOWING RED)
+    if (!isOk && !scanInProgress) {
+      ctx.save();
+      drawPresetVectorsToCanvas(ctx, selectedClass.id, "highlighted");
+      ctx.restore();
+    }
+
+    // C. BOUNDING BOXES
+    if (showBoundingBoxes && !isOk && !scanInProgress) {
+      ctx.save();
+
+      let bx = 80, by = 80, bw = 200, bh = 200;
+      if (customImage) {
+        bx = Math.max(10, attentionCenter.x - 70);
+        by = Math.max(10, attentionCenter.y - 60);
+        bw = 140;
+        bh = 120;
+        if (bx + bw > w) bx = w - bw - 10;
+        if (by + bh > h) by = h - bh - 10;
+      } else {
+        switch (selectedClass.id) {
+          case "crazing": bx = 65; by = 75; bw = 170; bh = 95; break;
+          case "inclusion": bx = 120; by = 140; bw = 115; bh = 95; break;
+          case "patches": bx = 100; by = 60; bw = 240; bh = 245; break;
+          case "pitted_surface": bx = 80; by = 95; bw = 215; bh = 205; break;
+          case "rolled_in_scale": bx = 80; by = 80; bw = 215; bh = 215; break;
+          case "scratches": bx = 65; by = 100; bw = 290; bh = 165; break;
+        }
+      }
+
+      ctx.fillStyle = "rgba(239, 68, 68, 0.05)";
+      ctx.fillRect(bx, by, bw, bh);
+
+      ctx.strokeStyle = "#ef4444";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([5, 3]);
+      ctx.strokeRect(bx, by, bw, bh);
+      ctx.setLineDash([]);
+
+      ctx.lineWidth = 3.5;
+      const bracketLen = 12;
+      ctx.beginPath(); ctx.moveTo(bx + bracketLen, by); ctx.lineTo(bx, by); ctx.lineTo(bx, by + bracketLen); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(bx + bw - bracketLen, by); ctx.lineTo(bx + bw, by); ctx.lineTo(bx + bw, by + bracketLen); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(bx, by + bh - bracketLen); ctx.lineTo(bx, by + bh); ctx.lineTo(bx + bracketLen, by + bh); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(bx + bw - bracketLen, by + bh); ctx.lineTo(bx + bw, by + bh); ctx.lineTo(bx + bw, by + bh - bracketLen); ctx.stroke();
+
+      const tagText = `${selectedClass.name.toUpperCase()} (CONF: ${selectedClass.name === "None (OK)" ? "99" : "96.4"}%)`;
+      ctx.font = "bold 8.5px monospace";
+      const textWidth = ctx.measureText(tagText).width;
+
+      ctx.fillStyle = "#ef4444";
+      ctx.fillRect(bx, by - 14, textWidth + 10, 14);
+
+      ctx.fillStyle = "#0c0a0f";
+      ctx.fillText(tagText, bx + 5, by - 4);
+
+      const cx = bx + bw / 2;
+      const cy = by + bh / 2;
+      ctx.strokeStyle = "rgba(239, 68, 68, 0.6)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cx - 5, cy); ctx.lineTo(cx + 5, cy);
+      ctx.moveTo(cx, cy - 5); ctx.lineTo(cx, cy + 5);
+      ctx.stroke();
+
+      ctx.restore();
+    } else if (showBoundingBoxes && isOk && !scanInProgress) {
+      ctx.save();
+      ctx.strokeStyle = "#10b981";
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(15, 15, w - 30, h - 30);
+      ctx.fillStyle = "#10b981";
+      ctx.font = "bold 9px monospace";
+      ctx.fillText("[SENSE: STRIP COMPLIANT]", 25, 30);
+      ctx.restore();
+    }
+
+    if (!scanInProgress) {
+      ctx.save();
+      ctx.fillStyle = "rgba(34, 211, 238, 0.55)";
+      ctx.font = "7.5px monospace";
+      ctx.fillText(`LAYER: ${resnetLayer}  |  STATUS: EXPLAINABLE_CORE_OK  |  PROBE: ${customImage ? "MANUAL" : "AUTO"}`, 12, h - 12);
+
+      if (customImage && showHeatmap) {
+        ctx.fillStyle = "rgba(34, 211, 238, 0.85)";
+        ctx.font = "bold 8px monospace";
+        ctx.fillText("⌖ RE-FOCUS TARGET: CLICK STEEL VIEWPORT SURFACE", 12, 22);
+
+        ctx.strokeStyle = "#22d3ee";
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(attentionCenter.x, attentionCenter.y, 6, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(attentionCenter.x - 10, attentionCenter.y); ctx.lineTo(attentionCenter.x + 10, attentionCenter.y);
+        ctx.moveTo(attentionCenter.x, attentionCenter.y - 10); ctx.lineTo(attentionCenter.x, attentionCenter.y + 10);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+  };
+
+  // EXPLAINABLE ENGINE RENDERING DIRECT DRAW
+  const drawExplainableCanvas = () => {
+    const canvas = document.getElementById("explainable_ai_canvas") as HTMLCanvasElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const w = canvas.width;
+    const h = canvas.height;
+
+    ctx.clearRect(0, 0, w, h);
+
+    if (showOriginal) {
+      if (customImage) {
+        const img = new Image();
+        img.src = customImage;
+        img.onload = () => {
+          ctx.save();
+          const blurVal = (numIterationsBilateral - 5) / 10;
+          const contrastVal = claheClipValue * 30 + 70;
+          ctx.filter = `contrast(${contrastVal}%) blur(${blurVal}px) grayscale(${cvStage === "clahe" || cvStage === "contour" ? "100%" : "0%"})`;
+          ctx.drawImage(img, 0, 0, w, h);
+          ctx.restore();
+
+          drawOverlays(ctx, w, h);
+        };
+        img.onerror = () => {
+          drawProceduralSteel(ctx, w, h);
+          drawOverlays(ctx, w, h);
+        };
+        return;
+      } else {
+        drawProceduralSteel(ctx, w, h);
+        drawOverlays(ctx, w, h);
+      }
+    } else {
+      ctx.fillStyle = "#090d16";
+      ctx.fillRect(0, 0, w, h);
+      drawOverlays(ctx, w, h);
+    }
+  };
+
+  const drawProceduralSteel = (ctx: CanvasRenderingContext2D, w: number, h: number) => {
+    ctx.save();
+    const grad = ctx.createLinearGradient(0, 0, w, h);
+    grad.addColorStop(0, "#1e293b");
+    grad.addColorStop(0.5, "#0f172a");
+    grad.addColorStop(1, "#020617");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.02)";
+    ctx.lineWidth = 1;
+    for (let i = 0; i < h; i += 3) {
+      ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(w, i); ctx.stroke();
+    }
+
+    ctx.fillStyle = "rgba(255, 255, 255, 0.006)";
+    ctx.beginPath(); ctx.arc(w / 2, h / 2, w / 2.5, 0, Math.PI * 2); ctx.fill();
+
+    const blurVal = (numIterationsBilateral - 5) / 15;
+    const contrastVal = claheClipValue * 25 + 75;
+    ctx.filter = `contrast(${contrastVal}%) blur(${blurVal}px)`;
+
+    drawPresetVectorsToCanvas(ctx, selectedClass.id, "raw");
+    ctx.restore();
+  };
+
+  // HANDLE CANVAS VIEWPORT CLICK
+  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!customImage) return;
+    const canvas = e.currentTarget;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+    setAttentionCenter({ x: Math.round(x), y: Math.round(y) });
+  };
+
+  // DOWNLOAD CERTIFIED REPORT
+  const downloadInspectionReport = () => {
+    const reportCanvas = document.createElement("canvas");
+    reportCanvas.width = 1100;
+    reportCanvas.height = 800;
+    const ctx = reportCanvas.getContext("2d");
+    if (!ctx) return;
+
+    // Outer dark frame
+    ctx.fillStyle = "#030712";
+    ctx.fillRect(0, 0, 1100, 800);
+
+    // Matrix grid background
+    ctx.strokeStyle = "#111827";
+    ctx.lineWidth = 1;
+    for (let x = 0; x < 1100; x += 50) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 800); ctx.stroke();
+    }
+    for (let y = 0; y < 800; y += 50) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(1100, y); ctx.stroke();
+    }
+
+    // Glowing cyan outline
+    ctx.strokeStyle = "rgba(34, 211, 238, 0.25)";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(12, 12, 1076, 776);
+
+    // Header label
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 23px monospace";
+    ctx.fillText("TATA STEEL AUTOMATED COIL SPECTRUM REPORT", 40, 50);
+
+    ctx.fillStyle = "#22d3ee";
+    ctx.font = "bold 11px monospace";
+    ctx.fillText("EXPLAINABLE AI DEEP-LEARNING RE-Rolling DIAGNOSTICS", 40, 72);
+
+    ctx.fillStyle = "#475569";
+    ctx.font = "10.5px monospace";
+    const recordTime = new Date().toISOString().replace('T', ' ').substring(0, 19);
+    ctx.fillText(`SERIAL_ID: TS-RE-ONNX-${Math.floor(10000 + Math.random() * 90000)} | RECORDED: ${recordTime} UTC | WORKSPACE_PROD: TATASECURE`, 40, 94);
+
+    // Header Separator line
+    ctx.strokeStyle = "#1e293b";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(40, 108); ctx.lineTo(1060, 108); ctx.stroke();
+
+    // Draw main visual capture
+    const mainCanvas = document.getElementById("explainable_ai_canvas") as HTMLCanvasElement;
+    if (mainCanvas) {
+      // visual plate box background
+      ctx.fillStyle = "#0c0f1d";
+      ctx.fillRect(45, 140, 480, 480);
+      ctx.drawImage(mainCanvas, 45, 140, 480, 480);
+      
+      ctx.strokeStyle = "rgba(34, 211, 238, 0.45)";
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(45, 140, 480, 480);
+
+      // Plate Label
+      ctx.fillStyle = "#64748b";
+      ctx.font = "bold 10px monospace";
+      ctx.fillText("CAPTURE FIG 1.0: LIVE Conv5_x Grad-CAM ATTENTION MAP", 45, 642);
+    }
+
+    // Inference results details right column
+    ctx.fillStyle = "rgba(15, 23, 42, 0.55)";
+    ctx.fillRect(570, 140, 485, 480);
+    ctx.strokeStyle = "#1e293b";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(570, 140, 485, 480);
+
+    ctx.fillStyle = "#38bdf8";
+    ctx.font = "bold 15px monospace";
+    ctx.fillText("ANALYSIS DECISION MODULE", 600, 185);
+
+    ctx.fillStyle = "#64748b";
+    ctx.font = "12px monospace";
+    ctx.fillText("DETECTION PARADIGM:", 600, 225);
+    
+    const isOkVal = selectedClass.name.includes("None") || selectedClass.name === "None (OK)";
+    ctx.fillStyle = isOkVal ? "#34d399" : "#f87171";
+    ctx.font = "bold 18px monospace";
+    ctx.fillText(selectedClass.name.toUpperCase(), 600, 250);
+
+    ctx.fillStyle = "#64748b";
+    ctx.font = "12px monospace";
+    ctx.fillText("PREDICTION ACCURACY INDEX:", 600, 300);
+    ctx.fillStyle = "#38bdf8";
+    ctx.font = "bold 16px monospace";
+    ctx.fillText(isOkVal ? "99.2%" : "96.4%", 600, 325);
+
+    ctx.fillStyle = "#64748b";
+    ctx.font = "12px monospace";
+    ctx.fillText("SPECIFICATION SEVERITY AREA COEFF:", 600, 375);
+    ctx.fillStyle = isOkVal ? "#34d399" : "#f59e0b";
+    ctx.font = "bold 16px monospace";
+    ctx.fillText(`${selectedClass.baseSeverity}% Area Damage Coefficient`, 600, 400);
+
+    ctx.fillStyle = "#64748b";
+    ctx.font = "bold 11px monospace";
+    ctx.fillText("PRESCRIBED PROTOCOL CORRECTIONS:", 600, 455);
+    
+    ctx.fillStyle = "#e2e8f0";
+    ctx.font = "11.5px sans-serif";
+    const actionText = selectedClass.id === "scratches" ? "CRITICAL: Clear guides roller stand 4. Verify strip tension line orientation." :
+                       selectedClass.id === "crazing" ? "WARNING: Material shows fatigue. Reduce rolling speed and water wash headers." :
+                       selectedClass.id === "inclusion" ? "CRITICAL: Chemical inclusions detected. Halt sequence for deoxidation wash." :
+                       selectedClass.id === "patches" ? "ADVISORY: Calibrate descaler nozzle pressure. Monitor local strip thickness." :
+                       selectedClass.id === "pitted_surface" ? "WARNING: Pickling line calibration check required. Monitor thermal profile." :
+                       selectedClass.id === "rolled_in_scale" ? "WARNING: Clear hydraulic scraper blade blockages. Perform localized descales." :
+                       "SYSTEM PASS: Mill sequences cleared. Slab meets high-yield specification ASTM limits.";
+    
+    let lineText = "";
+    let startY = 482;
+    const words = actionText.split(" ");
+    for (let u = 0; u < words.length; u++) {
+      const checkLine = lineText + words[u] + " ";
+      const testW = ctx.measureText(checkLine).width;
+      if (testW > 420 && u > 0) {
+        ctx.fillText(lineText, 600, startY);
+        lineText = words[u] + " ";
+        startY += 18;
+      } else {
+        lineText = checkLine;
+      }
+    }
+    ctx.fillText(lineText, 600, startY);
+
+    ctx.fillStyle = "#475569";
+    ctx.font = "9.5px monospace";
+    ctx.fillText("INTEGRATION_STACK: ONNX, BILATERAL PREPROCESSOR v1.4", 600, 565);
+    ctx.fillText("OFFICIAL SEAL: CERTIFIED STRUCTURAL STEEL RE-ROLL RELEASE", 600, 582);
+
+    ctx.strokeStyle = "rgba(34, 211, 238, 0.35)";
+    ctx.strokeRect(880, 500, 140, 90);
+    ctx.fillStyle = "rgba(34, 211, 238, 0.02)";
+    ctx.fillRect(880, 500, 140, 90);
+    ctx.fillStyle = "rgba(34, 211, 238, 0.55)";
+    ctx.font = "8px monospace";
+    ctx.fillText("TATA JUPITER LABS", 890, 522);
+    ctx.fillText("METALLURG STAMP", 890, 542);
+    ctx.fillStyle = isOkVal ? "#34d399" : "#fb7185";
+    ctx.font = "bold 9px monospace";
+    ctx.fillText(isOkVal ? "STATUS: PASS" : "STATUS: REJECT", 890, 565);
+
+    ctx.fillStyle = "rgba(255,255,255,0.08)";
+    ctx.font = "bold 9.5px monospace";
+    ctx.fillText("COIL VALIDITY SEAL DOCUMENT. REPORT HAS BEEN ELECTRONICALLY SIGNED BY ONNX CONVNET CONTROLLERS.", 40, 750);
+
+    const downLink = document.createElement("a");
+    downLink.download = `TATA_AI_QC_REPORT_${selectedClass.id.toUpperCase()}_${Math.floor(100+Math.random()*900)}.png`;
+    downLink.href = reportCanvas.toDataURL("image/png");
+    downLink.click();
+  };
+
+  useEffect(() => {
+    if (activeTab === "dashboard") {
+      const t = setTimeout(() => {
+        drawExplainableCanvas();
+      }, 50);
+      return () => clearTimeout(t);
+    }
+  }, [
+    activeTab,
+    selectedClass,
+    customImage,
+    showOriginal,
+    showBoundingBoxes,
+    showHeatmap,
+    heatmapAlpha,
+    resnetLayer,
+    attentionCenter,
+    cvStage,
+    scanInProgress,
+    numIterationsBilateral,
+    claheClipValue
+  ]);
 
   // Auto fluctuating factory metrics for fidelity feel
   useEffect(() => {
@@ -689,7 +1493,14 @@ export default function App() {
            ========================================== */}
         <nav className="lg:col-span-3 space-y-2">
           {[
+            { id: "control", label: "Smart Factory HUD", icon: Tv },
+            { id: "inference", label: "Live Vision Inference", icon: Video },
             { id: "dashboard", label: "Inspection Dashboard", icon: Sliders },
+            { id: "twin", label: "Digital Twin 3D", icon: Cpu },
+            { id: "roi", label: "Executive ROI Center", icon: Coins },
+            { id: "sustainability", label: "Sustainability & ESG", icon: Leaf },
+            { id: "reports", label: "QA Report Center", icon: FileText },
+            { id: "training", label: "NEU Model Training", icon: Cpu },
             { id: "analytics", label: "AI Analytics", icon: TrendingUp },
             { id: "history", label: "Inspection History", icon: Activity },
             { id: "architecture", label: "System Architecture", icon: BookOpen },
@@ -871,135 +1682,176 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* CENTER PANEL: CV PIPELINE IMAGES (RAW, PROCESSED, CONTOUR) */}
-                  <div className="lg:col-span-6 bg-slate-950 p-5 rounded-2xl border border-slate-800/80 flex flex-col justify-between shadow-xl min-h-[520px]">
+                  {/* CENTER PANEL: EXPLAINABLE AI CORE SENSING UNIT */}
+                  <div className="lg:col-span-5 bg-slate-950 p-5 rounded-2xl border border-slate-800/80 flex flex-col justify-between shadow-xl min-h-[520px]">
                     <div>
-                      <div className="border-b border-slate-800 pb-2.5 mb-3 flex justify-between items-center">
-                        <h3 className="text-[10px] uppercase font-mono tracking-widest text-[#22d3ee] font-bold">Pipeline Stage Optimization</h3>
-                        <span className="text-[9px] font-mono text-slate-500">
-                          {customImage ? "SOURCE: METALLURG_UPLOAD.RAW" : `COIL BATCH: ${selectedClass.name.toUpperCase()}-772`}
-                        </span>
+                      {/* Header with Certified Download Trigger */}
+                      <div className="border-b border-slate-800 pb-2.5 mb-4 flex justify-between items-center">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                          <h3 className="text-[10px] uppercase font-mono tracking-widest text-[#22d3ee] font-bold">
+                            Explainable AI Core (Grad-CAM)
+                          </h3>
+                        </div>
+                        <button
+                          onClick={downloadInspectionReport}
+                          className="flex items-center gap-1.5 px-3 py-1 bg-cyan-950/40 hover:bg-cyan-900/60 text-cyan-400 hover:text-cyan-300 font-bold font-mono text-[9px] tracking-wide uppercase rounded border border-cyan-800/50 transition duration-200"
+                          title="Generate high resolution official PDF/PNG diagnostic report of this automated quality inspection state."
+                        >
+                          <Download className="w-3 h-3" />
+                          <span>CERTIFIED REPORT</span>
+                        </button>
                       </div>
 
-                      {/* Grid of the 3 synchronized screens side-by-side */}
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 my-3">
+                      {/* Diagnostic Dashboard Controls & Sliders inside Viewport */}
+                      <div className="bg-slate-900/40 border border-slate-800/60 p-3 rounded-xl mb-4 space-y-3 font-mono">
                         
-                        {/* 1. ORIGINAL IMAGE */}
-                        <div className="border border-slate-900 bg-[#070b14] rounded-xl p-2.5 flex flex-col justify-between h-[280px]">
-                          <div className="flex justify-between items-center pb-1.5 border-b border-slate-900">
-                            <span className="text-[9px] font-mono text-slate-400 font-bold uppercase">1. Raw Input</span>
-                            <span className="text-[7.5px] font-mono text-slate-600">UNREALIZED</span>
-                          </div>
-                          <div className="relative flex-1 flex items-center justify-center overflow-hidden my-2 bg-slate-950 rounded-lg border border-slate-900/60">
-                            {customImage ? (
-                              <img src={customImage} alt="Raw Input" className="w-full h-full object-cover rounded" />
-                            ) : (
-                              <svg className="w-full h-full absolute inset-0 text-slate-100" viewBox="0 0 400 400">
-                                <rect width="400" height="400" fill="#020617" opacity="0.3" />
-                                {renderPresetVectors(selectedClass.id, "raw")}
-                              </svg>
-                            )}
-                            {scanInProgress && (
-                              <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center">
-                                <RefreshCw className="w-5 h-5 text-cyan-400 animate-spin" />
-                              </div>
-                            )}
-                          </div>
-                          <span className="text-[8px] font-mono text-slate-500 text-center block bg-slate-900/40 py-1 rounded">No filtering applied</span>
+                        {/* Interactive Toggles & Activation */}
+                        <div className="grid grid-cols-3 gap-2 text-[9px]">
+                          <button
+                            onClick={() => {
+                              setShowOriginal(!showOriginal);
+                              setTimeout(() => drawExplainableCanvas(), 10);
+                            }}
+                            className={`py-1.5 px-2 rounded font-bold uppercase transition flex items-center justify-center gap-1 border ${
+                              showOriginal 
+                                ? "bg-cyan-950/20 text-cyan-400 border-cyan-800/50 shadow-[0_0_10px_rgba(34,211,238,0.1)]" 
+                                : "bg-slate-950 text-slate-500 border-slate-800"
+                            }`}
+                          >
+                            <span className={`w-1.5 h-1.5 rounded-full ${showOriginal ? "bg-cyan-400" : "bg-slate-700"}`} />
+                            <span>1. Raw Texture</span>
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              setShowBoundingBoxes(!showBoundingBoxes);
+                              setTimeout(() => drawExplainableCanvas(), 10);
+                            }}
+                            className={`py-1.5 px-2 rounded font-bold uppercase transition flex items-center justify-center gap-1 border ${
+                              showBoundingBoxes 
+                                ? "bg-cyan-950/20 text-cyan-400 border-cyan-800/50 shadow-[0_0_10px_rgba(34,211,238,0.1)]" 
+                                : "bg-slate-950 text-slate-500 border-slate-800"
+                            }`}
+                          >
+                            <span className={`w-1.5 h-1.5 rounded-full ${showBoundingBoxes ? "bg-cyan-400" : "bg-slate-700"}`} />
+                            <span>2. Bounding Box</span>
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              setShowHeatmap(!showHeatmap);
+                              setTimeout(() => drawExplainableCanvas(), 10);
+                            }}
+                            className={`py-1.5 px-2 rounded font-bold uppercase transition flex items-center justify-center gap-1 border ${
+                              showHeatmap 
+                                ? "bg-cyan-950/20 text-cyan-400 border-cyan-800/50 shadow-[0_0_10px_rgba(34,211,238,0.1)]" 
+                                : "bg-slate-950 text-slate-500 border-slate-800"
+                            }`}
+                          >
+                            <span className={`w-1.5 h-1.5 rounded-full ${showHeatmap ? "bg-cyan-400" : "bg-slate-700"}`} />
+                            <span>3. Attention Map</span>
+                          </button>
                         </div>
 
-                        {/* 2. PROCESSED IMAGE */}
-                        <div className="border border-slate-900 bg-[#070b14] rounded-xl p-2.5 flex flex-col justify-between h-[280px]">
-                          <div className="flex justify-between items-center pb-1.5 border-b border-slate-900">
-                            <span className="text-[9px] font-mono text-slate-400 font-bold uppercase">2. Enhanced</span>
-                            <span className="text-[7.5px] font-mono text-cyan-500 font-bold">CLAHE FILTER</span>
+                        {/* Dropdown ResNet Backprop Layers + Alpha Blending Range */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800/40">
+                          
+                          {/* Backprop Layer Selectors */}
+                          <div className="flex items-center justify-between gap-2 bg-slate-950 p-2 rounded border border-slate-800/80">
+                            <span className="text-[9px] text-slate-400 uppercase font-bold">ResNet Layer:</span>
+                            <div className="flex gap-1.5">
+                              {(["Conv5_x", "Conv4_x", "Conv3_x"] as const).map((layer) => (
+                                <button
+                                  key={layer}
+                                  onClick={() => {
+                                    setResnetLayer(layer);
+                                    setTimeout(() => drawExplainableCanvas(), 10);
+                                  }}
+                                  className={`px-1.5 py-0.5 text-[8.5px] font-bold rounded ${
+                                    resnetLayer === layer 
+                                      ? "bg-cyan-500 text-slate-950" 
+                                      : "bg-slate-900 text-slate-400 hover:text-slate-200"
+                                  }`}
+                                  title={
+                                    layer === "Conv5_x" ? "Deep abstract ResNet features (High-level)" :
+                                    layer === "Conv4_x" ? "Intermediate texture groupings (Mid-level)" :
+                                    "Edge alignments and surface limits (Low-level)"
+                                  }
+                                >
+                                  {layer}
+                                </button>
+                              ))}
+                            </div>
                           </div>
-                          <div className="relative flex-1 flex items-center justify-center overflow-hidden my-2 bg-slate-950 rounded-lg border border-slate-900/60">
-                            {customImage ? (
-                              <img src={customImage} alt="Processed Image" className="w-full h-full object-cover rounded filter grayscale contrast-200 brightness-90 blur-[0.6px]" />
-                            ) : (
-                              <svg className="w-full h-full absolute inset-0 text-slate-100" viewBox="0 0 400 400">
-                                <rect width="400" height="400" fill="#020617" opacity="0.8" />
-                                {renderPresetVectors(selectedClass.id, "processed")}
-                              </svg>
-                            )}
-                            {scanInProgress && (
-                              <div className="absolute inset-x-0 bottom-4 flex justify-center">
-                                <span className="text-[8px] font-mono text-cyan-400 bg-slate-950 px-1.5 py-0.5 border border-cyan-500/30 rounded animate-pulse">SMOOTHING...</span>
-                              </div>
-                            )}
-                          </div>
-                          <span className="text-[8px] font-mono text-cyan-400 text-center block bg-[#0e3b43]/30 py-1 rounded border border-cyan-950/20">Bilateral smoothed</span>
-                        </div>
 
-                        {/* 3. DEFECT HIGHLIGHTED IMAGE */}
-                        <div className="border border-slate-900 bg-[#070b14] rounded-xl p-2.5 flex flex-col justify-between h-[280px]">
-                          <div className="flex justify-between items-center pb-1.5 border-b border-slate-900">
-                            <span className="text-[9px] font-mono text-slate-400 font-bold uppercase">3. Contour Map</span>
-                            <span className={`text-[7.5px] font-mono font-bold ${selectedClass.name.includes("None") ? "text-emerald-400" : "text-red-400 animate-pulse"}`}>
-                              {selectedClass.name.includes("None") ? "VERIFIED" : "DEFECT FLAGGED"}
-                            </span>
+                          {/* Opacity Blend Range */}
+                          <div className="flex items-center justify-between gap-3 bg-slate-950 p-2 rounded border border-slate-800/80">
+                            <div className="flex justify-between items-center w-full">
+                              <span className="text-[9px] text-slate-400 uppercase font-bold">Blend Alpha:</span>
+                              <div className="flex items-center gap-1.5 flex-1 max-w-[100px] ml-2 font-bold font-mono">
+                                <input
+                                  type="range"
+                                  min="0.10"
+                                  max="0.90"
+                                  step="0.05"
+                                  value={heatmapAlpha}
+                                  onChange={(e) => {
+                                    setHeatmapAlpha(+e.target.value);
+                                    setTimeout(() => drawExplainableCanvas(), 10);
+                                  }}
+                                  className="w-full h-1 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                                />
+                                <span className="text-[8.5px] font-bold text-cyan-400 font-mono w-6 text-right">
+                                  {Math.round(heatmapAlpha * 100)}%
+                                </span>
+                              </div>
+                            </div>
                           </div>
-                          <div className="relative flex-1 flex items-center justify-center overflow-hidden my-2 bg-slate-950 rounded-lg border border-slate-900/60">
-                            {customImage ? (
-                              <div className="relative w-full h-full">
-                                <img src={customImage} alt="Highlighted Base" className="w-full h-full object-cover rounded filter grayscale contrast-125 saturate-50" />
-                                {!selectedClass.name.includes("None") && !scanInProgress && (
-                                  <>
-                                    <div className="absolute inset-4 border-2 border-dashed border-red-500 bg-red-500/15 rounded animate-pulse" />
-                                    <div className="absolute top-2 left-2 bg-red-950/90 text-[7px] text-red-00 font-mono px-1 rounded border border-red-900/60">
-                                      ANOMALY
-                                    </div>
-                                  </>
-                                )}
-                              </div>
-                            ) : (
-                              <div className="relative w-full h-full">
-                                <svg className="w-full h-full absolute inset-0 text-slate-100" viewBox="0 0 400 400">
-                                  <rect width="400" height="400" fill="#020617" opacity="0.9" />
-                                  {renderPresetVectors(selectedClass.id, "highlighted")}
-                                  {/* Bounding box overlay if not OK */}
-                                  {!selectedClass.name.includes("None") && !scanInProgress && (
-                                    <g stroke="#ef4444" strokeWidth="2" fill="none" strokeDasharray="3,3">
-                                      {selectedClass.id === "inclusion" && <rect x="120" y="140" width="115" height="95" rx="4" />}
-                                      {selectedClass.id === "scratches" && <rect x="65" y="100" width="290" height="165" rx="4" />}
-                                      {selectedClass.id === "crazing" && <rect x="65" y="75" width="170" height="95" rx="4" />}
-                                      {selectedClass.id === "patches" && <rect x="100" y="60" width="240" height="245" rx="4" />}
-                                      {selectedClass.id === "rolled_in_scale" && <rect x="80" y="80" width="215" height="215" rx="4" />}
-                                      {selectedClass.id === "pitted_surface" && <rect x="80" y="95" width="215" height="205" rx="4" />}
-                                    </g>
-                                  )}
-                                </svg>
-                                {!selectedClass.name.includes("None") && !scanInProgress && (
-                                  <div className="absolute top-2 left-2 bg-red-950/90 text-[7px] text-red-400 font-mono px-1 rounded border border-red-900/60 font-bold animate-pulse">
-                                    {selectedClass.id.toUpperCase()}
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                            {scanInProgress && (
-                              <div className="absolute inset-0 bg-slate-950/85 flex flex-col items-center justify-center gap-2">
-                                <RefreshCw className="w-6 h-6 text-cyan-400 animate-spin" />
-                                <span className="text-[8px] font-mono text-cyan-400">INSPECTING...</span>
-                              </div>
-                            )}
-                          </div>
-                          <span className={`text-[8px] font-mono text-center block py-1 rounded font-bold ${selectedClass.name.includes("None") ? "text-emerald-400 bg-emerald-950/10 border border-emerald-950/30" : "text-red-400 bg-red-950/10 border border-red-950/30 animate-pulse"}`}>
-                            {selectedClass.name.includes("None") ? "Slab Quality Approved" : "Contour Bounding Active"}
-                          </span>
-                        </div>
 
+                        </div>
                       </div>
+
+                      {/* Main Dynamic High Tech Render Viewport */}
+                      <div className="relative group w-full bg-[#050811] rounded-2xl border border-slate-900 flex flex-col items-center justify-center p-3.5 shadow-inner">
+                        <div className="absolute top-2 left-2 bg-slate-950/70 border border-slate-800 text-[8px] font-mono py-0.5 px-2 rounded-full text-slate-400 select-none pointer-events-none uppercase">
+                          {customImage ? "PROBED MANUALLY (COORDINATE SYSTEM)" : "AUTOPILOT SURFACE SCAN"}
+                        </div>
+                        <canvas
+                          id="explainable_ai_canvas"
+                          width={400}
+                          height={330}
+                          onClick={handleCanvasClick}
+                          className="max-w-full rounded-lg cursor-crosshair border border-slate-900 transition-all duration-300 shadow-2xl group-hover:border-cyan-500/20 bg-slate-950"
+                        />
+
+                        {scanInProgress && (
+                          <div className="absolute inset-0 bg-slate-950/85 flex flex-col items-center justify-center gap-2 rounded-2xl">
+                            <RefreshCw className="w-7 h-7 text-cyan-400 animate-spin" />
+                            <span className="text-[10px] font-mono text-cyan-400 font-bold uppercase animate-pulse">Running Backprop Saliency...</span>
+                            <span className="text-[8px] font-mono text-slate-500">Calculating layer gradient correlations for ResNet {resnetLayer}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Foot message showing instructions for interactive touch targets */}
+                      {customImage && (
+                        <div className="mt-2.5 bg-cyan-950/15 border border-cyan-900/30 text-[#22d3ee] p-2 rounded-lg text-center select-none animate-pulse">
+                          <p className="text-[8.5px] font-mono font-bold tracking-wide">
+                            💡 INTERACTIVE HEATMAP RE-FOCUS ACTIVE: CLICK ANYWHERE ON CANVAS TO RELOCATE THE GRAD-CAM ATTENTION CENTER
+                          </p>
+                        </div>
+                      )}
                     </div>
 
-                    <div className="border-t border-slate-900 pt-3 flex items-center justify-between text-[11px] font-mono">
-                      <span className="text-slate-500">Target Resolution:</span>
-                      <span className="text-slate-300">1024 px x 1024 px (Real-time Video Line Rate)</span>
+                    <div className="border-t border-slate-900 pt-3 mt-4 flex items-center justify-between text-[11px] font-mono text-slate-500">
+                      <span className="text-[9.5px]">XAI Framework Mode:</span>
+                      <span className="text-cyan-400 font-bold text-[9.5px]">Grad-CAM Backpropagation Enabled (ResNet50)</span>
                     </div>
                   </div>
 
                   {/* RIGHT PANEL: AI DECISION ENGINE */}
-                  <div className="lg:col-span-3 bg-slate-950 p-5 rounded-2xl border border-slate-800/80 flex flex-col justify-between shadow-xl min-h-[520px]">
+                  <div className="lg:col-span-4 bg-slate-950 p-5 rounded-2xl border border-slate-800/80 flex flex-col justify-between shadow-xl min-h-[520px]">
                     <div>
                       <div className="border-b border-slate-800 pb-2.5 mb-3 flex justify-between items-center">
                         <h3 className="text-[10px] uppercase font-mono tracking-widest text-[#22d3ee] font-bold">Inference Verdict</h3>
@@ -1095,6 +1947,261 @@ export default function App() {
                           <strong className="block text-xs text-white mt-0.5 text-right font-bold">CUDA DEVICE</strong>
                         </div>
                       </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                {/* ==============================================================================
+                    🧠 DIGITAL TWIN ROOT CAUSE DIAGNOSIS & JOINT COGNITIVE ENGINEERING DESK
+                   ============================================================================== */}
+                <div className="bg-[#050814] border border-slate-800/80 rounded-2xl p-6 space-y-6 shadow-2xl relative overflow-hidden">
+                  <div className="absolute top-0 left-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 w-full h-[3px]" />
+                  
+                  {/* Top-Level Header Information Block */}
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-900 pb-5">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-1.5 bg-cyan-950/40 rounded text-cyan-400 border border-cyan-800/30">
+                          <Cpu className="w-4 h-4 animate-spin animate-duration-3000" />
+                        </div>
+                        <h3 className="text-xs uppercase font-extrabold tracking-wider text-white font-mono">
+                          AI Cognitive Root Cause Diagnostic & Decision-Support Desk
+                        </h3>
+                      </div>
+                      <p className="text-[11px] text-slate-400 max-w-2xl font-sans leading-relaxed">
+                        Automatic micro-structure analysis evaluating mechanical, thermal, & metallurgical failure modes. Integrates live physical parameters from the billet casting lines.
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 self-start md:self-auto">
+                      <div className="text-right hidden sm:block">
+                        <span className="text-[9px] font-mono uppercase text-slate-500 block tracking-wider font-bold">Dynamic Classification</span>
+                        <span className="text-[10px] font-mono text-slate-300 font-bold">ASTM-A36 Material Spec</span>
+                      </div>
+                      <div className={`px-3.5 py-1.5 rounded-xl border font-bold font-mono text-[9.5px] uppercase tracking-wider shadow-sm flex items-center gap-2 ${calculatedSeverityClass.color}`}>
+                        <div className={`w-1.5 h-1.5 rounded-full ${selectedClass.name === "None (OK)" ? "bg-emerald-400" : "bg-red-400 animate-ping"}`} />
+                        {calculatedSeverityClass.label}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Core Diagnostic Desk Grid Panel */}
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    {/* LEFT PANEL: AUTOMATED OPERATOR COMMANDS & STRIP GAUGERS */}
+                    <div className="lg:col-span-4 bg-slate-950/80 border border-slate-900 rounded-xl p-4.5 flex flex-col justify-between space-y-4">
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2 border-b border-slate-900 pb-2">
+                          <Activity className="w-4 h-4 text-cyan-400" />
+                          <h4 className="text-[10px] uppercase font-mono tracking-widest text-[#22d3ee] font-extrabold">Autonomous Recommendations</h4>
+                        </div>
+                        
+                        <div className="relative rounded-lg p-3 bg-slate-900/[0.3] border border-slate-800/45 font-mono text-[10.5px] text-slate-300 leading-relaxed overflow-hidden">
+                          <div className="absolute top-0 right-0 p-1 font-bold text-[8px] tracking-wider text-cyan-400/60 uppercase">
+                            AI SYNTHESIS
+                          </div>
+                          
+                          <div className="whitespace-pre-line text-slate-305 text-left border-l-2 border-cyan-500/40 pl-2.5">
+                            {automaticOperatorRecommendation}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-slate-900/20 border border-slate-900 p-3 rounded-lg flex items-center justify-between text-[10px] font-mono">
+                        <span className="text-slate-500 uppercase">Process Interlock State:</span>
+                        <span className="text-emerald-400 font-bold bg-emerald-950/20 border border-emerald-900/40 px-2 py-0.5 rounded uppercase font-mono">ACTIVE MONITORING</span>
+                      </div>
+                    </div>
+
+                    {/* CENTER PANEL: PHYSICS-BALANCED CAUSES & KNOWLEDGE SYSTEM */}
+                    <div className="lg:col-span-4 bg-slate-950/80 border border-slate-900 rounded-xl p-4.5 space-y-5">
+                      {/* Causes Probability Header */}
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2 border-b border-slate-900 pb-2">
+                          <Sliders className="w-4 h-4 text-cyan-400" />
+                          <h4 className="text-[10px] uppercase font-mono tracking-widest text-[#22d3ee] font-extrabold">Predicted Industrial Root Causes</h4>
+                        </div>
+
+                        <div className="space-y-3">
+                          {selectedClass.name === "None (OK)" || selectedClass.name.includes("None") ? (
+                            <div className="space-y-2 font-mono text-[10.5px]">
+                              <div className="space-y-1">
+                                <div className="flex justify-between text-slate-400">
+                                  <span>Chemical Consistencies Bounds</span>
+                                  <span className="text-emerald-400 font-bold">100.0% Nominal</span>
+                                </div>
+                                <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
+                                  <div className="bg-emerald-400 h-full w-[100%]" />
+                                </div>
+                              </div>
+                              <div className="space-y-1">
+                                <div className="flex justify-between text-slate-400">
+                                  <span>Casting Friction Factor</span>
+                                  <span className="text-emerald-400 font-bold">99.4% Stable</span>
+                                </div>
+                                <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
+                                  <div className="bg-emerald-400 h-full w-[99.4%]" />
+                                </div>
+                              </div>
+                              <p className="text-[9px] text-slate-500 leading-normal mt-2 italic">
+                                Slices through casting parameters reveal no current structural thermal fatigue, surface slips, or pickling acid drifts.
+                              </p>
+                            </div>
+                          ) : (
+                            ((DEFECT_DIAGNOSTICS[selectedClass.id] || DEFECT_DIAGNOSTICS["scratches"]).causes.map((cause, index) => (
+                              <div key={index} className="space-y-1 font-mono text-[10.5px]">
+                                <div className="flex justify-between text-slate-305 gap-2">
+                                  <span className="truncate max-w-[210px] text-slate-300" title={cause.factor}>{cause.factor}</span>
+                                  <span className="text-cyan-400 font-bold shrink-0">{cause.probability}% Prob</span>
+                                </div>
+                                <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800/50">
+                                  <div 
+                                    className="bg-gradient-to-r from-cyan-500 to-blue-500 h-full rounded-full transition-all duration-300"
+                                    style={{ width: `${cause.probability}%` }}
+                                  />
+                                </div>
+                              </div>
+                            )))
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Metallurgy Knowledge Engine explanation card */}
+                      <div className="pt-3 border-t border-slate-900/60 space-y-2">
+                        <div className="flex items-center gap-1.5">
+                          <BookOpen className="w-3.5 h-3.5 text-blue-400" />
+                          <h5 className="text-[9.5px] uppercase font-mono tracking-wider text-slate-300 font-bold">
+                            Metallurgical Fracture Physics
+                          </h5>
+                        </div>
+                        <p className="text-[10.5px] text-slate-400 leading-relaxed font-sans text-justify">
+                          {selectedClass.name === "None (OK)" || selectedClass.name.includes("None") ? (
+                            "Continuous mechanical-physical reduction sequences occur uniform across the complete coil width. High homogeneity of the carbon grain bounds guarantees structural integrity under high fatigue criteria."
+                          ) : (
+                            (DEFECT_DIAGNOSTICS[selectedClass.id] || DEFECT_DIAGNOSTICS["scratches"]).scienceExplanation
+                          )}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* RIGHT PANEL: CORRECTIVE ACTIONS TASK BOARD & PREDICTIVE CHECKS */}
+                    <div className="lg:col-span-4 bg-slate-950/80 border border-slate-900 rounded-xl p-4.5 space-y-4 flex flex-col justify-between">
+                      
+                      <div className="space-y-3.5">
+                        <div className="flex items-center justify-between border-b border-slate-900 pb-2">
+                          <div className="flex items-center gap-2">
+                            <Wrench className="w-4 h-4 text-cyan-400" />
+                            <h4 className="text-[10px] uppercase font-mono tracking-widest text-[#22d3ee] font-extrabold font-mono">Smart Corrective Interventions</h4>
+                          </div>
+                          
+                          {selectedClass.name !== "None (OK)" && !selectedClass.name.includes("None") && (
+                            <button
+                              onClick={() => {
+                                const currentDefId = selectedClass.id;
+                                const diagnostics = DEFECT_DIAGNOSTICS[currentDefId];
+                                if (diagnostics) {
+                                  const updated: Record<string, boolean> = { ...checkedInterventions };
+                                  const logMessages: string[] = [];
+                                  const timeNow = new Date().toISOString().substring(11, 19);
+                                  
+                                  diagnostics.correctiveActions.forEach((action, i) => {
+                                    const key = `${currentDefId}_${i}`;
+                                    if (!updated[key]) {
+                                      updated[key] = true;
+                                      logMessages.push(`[${timeNow}] CRITICAL DISPATCH: Transmitted PLC command: '${action}' for ${selectedClass.name} control. Status 200 OK.`);
+                                    }
+                                  });
+                                  
+                                  setCheckedInterventions(updated);
+                                  if (logMessages.length > 0) {
+                                    setConsoleLogs(prev => [...logMessages, ...prev]);
+                                  }
+                                }
+                              }}
+                              className="text-[8px] font-mono text-cyan-405 hover:text-cyan-300 border border-cyan-800 bg-cyan-950/20 px-2 py-0.5 rounded cursor-pointer transition uppercase"
+                              title="Engage all preventative actions and push commands directly to PLC hot manifolds."
+                            >
+                              DISPATCH ALL
+                            </button>
+                          )}
+                        </div>
+
+                        {selectedClass.name === "None (OK)" || selectedClass.name.includes("None") ? (
+                          <div className="flex flex-col items-center justify-center p-6 text-center text-slate-500 space-y-2 border border-dashed border-slate-900 rounded-xl">
+                            <div className="p-2 bg-slate-900 rounded-full">
+                              <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                            </div>
+                            <span className="text-[10.5px] font-mono">No active interlocks needed.</span>
+                            <span className="text-[8.5px] leading-normal font-sans">Mechanical parameters are healthy. Standard loopers operating under closed-loop telemetry.</span>
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            {((DEFECT_DIAGNOSTICS[selectedClass.id] || DEFECT_DIAGNOSTICS["scratches"]).correctiveActions.map((action, i) => {
+                              const key = `${selectedClass.id}_${i}`;
+                              const isChecked = !!checkedInterventions[key];
+                              return (
+                                <div 
+                                  key={i} 
+                                  onClick={() => {
+                                    const nextState = !isChecked;
+                                    setCheckedInterventions(prev => ({
+                                      ...prev,
+                                      [key]: nextState
+                                    }));
+                                    const msgTime = new Date().toISOString().substring(11, 19);
+                                    setConsoleLogs(prev => [
+                                      `[${msgTime}] COMMAND: Corrective action '${action}' set to ${nextState ? "DISPATCHED" : "RESCINDED"} by operator OP-44.`,
+                                      ...prev
+                                    ]);
+                                  }}
+                                  className={`flex items-start gap-2.5 p-2 rounded-lg border text-[10px] font-mono cursor-pointer transition-all duration-150 text-left ${
+                                    isChecked 
+                                      ? "bg-cyan-950/30 border-cyan-500/30 text-slate-100" 
+                                      : "bg-slate-900/40 border-slate-900 text-slate-400 hover:bg-slate-900/60 hover:text-slate-200 hover:border-slate-800"
+                                  }`}
+                                >
+                                  <div className="shrink-0 mt-0.5">
+                                    {isChecked ? (
+                                      <div className="w-3 h-3 rounded bg-cyan-400 text-slate-900 flex items-center justify-center">
+                                        <Check className="w-2.5 h-2.5 stroke-[4.5px]" />
+                                      </div>
+                                    ) : (
+                                      <div className="w-3 h-3 rounded border border-slate-700 bg-slate-950" />
+                                    )}
+                                  </div>
+                                  <span className="leading-tight text-[10px]">{action}</span>
+                                </div>
+                              );
+                            }))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Predictive Maintenance list inside current defect framework */}
+                      <div className="pt-3 border-t border-slate-900/60 space-y-2">
+                        <div className="flex items-center gap-1.5 text-[9.5px] uppercase font-mono tracking-wider text-slate-300 font-bold">
+                          <Settings className="w-3 h-3 text-cyan-400 font-mono" />
+                          <span>Predictive Maintenance Targets</span>
+                        </div>
+                        
+                        <div className="space-y-1.5 font-mono text-[9px] text-slate-500 text-left">
+                          {selectedClass.name === "None (OK)" || selectedClass.name.includes("None") ? (
+                            <div className="flex justify-between items-center bg-slate-900/30 px-2 py-1 rounded border border-slate-900 w-full text-[9px]">
+                              <span>Next Scheduled Inspection Check:</span>
+                              <span className="text-cyan-400 font-bold font-mono">48 Operating Hrs</span>
+                            </div>
+                          ) : (
+                            ((DEFECT_DIAGNOSTICS[selectedClass.id] || DEFECT_DIAGNOSTICS["scratches"]).recommendations.map((rec, i) => (
+                              <div key={i} className="flex gap-2 items-start text-left bg-slate-900/35 p-1.5 rounded border border-slate-900 text-slate-400 leading-tight w-full text-[9px]">
+                                <span className="text-cyan-500 font-bold shrink-0 font-mono">·</span>
+                                <span>{rec}</span>
+                              </div>
+                            )))
+                          )}
+                        </div>
+                      </div>
+
                     </div>
 
                   </div>
@@ -1211,7 +2318,7 @@ export default function App() {
               </motion.div>
             )}
 
-             {/* 2. AI ANALYTICS */}
+             {/* 2. AI ANALYTICS (PREDICTIVE INDUSTRIAL ANALYTICS & MAINTENANCE ENGINE) */}
              {activeTab === "analytics" && (
                <motion.div
                  key="analytics"
@@ -1221,91 +2328,642 @@ export default function App() {
                  transition={{ duration: 0.2 }}
                  className="space-y-6"
                >
+                 {/* TOP ALERTS PANEL & DIAGNOSTIC SLIDERS CONTROL */}
                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                   {/* BAR CHART BREAKDOWN (5 Cols) */}
-                   <div className="lg:col-span-5 bg-slate-950 border border-slate-800/80 rounded-2xl p-5">
-                     <h3 className="text-sm font-bold text-white mb-1">Defect Distribution Volume</h3>
-                     <p className="text-[11px] text-slate-500 font-mono mb-4">Total incidents categorised by ResNet head</p>
- 
-                     <div className="space-y-3.5 font-mono text-xs">
-                       {DEFECT_CLASSES.map((cls) => {
-                         const count = defectCounts[cls.name] || 12;
-                         const pctOfMax = (count / 70) * 100;
-                         return (
-                           <div key={cls.id} className="space-y-1">
-                             <div className="flex justify-between text-slate-400">
-                               <span>{cls.name}</span>
-                               <span className="text-white font-bold">{count} incidents</span>
-                             </div>
-                             <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800/50">
-                               <div
-                                 className="bg-gradient-to-r from-cyan-400 to-blue-500 h-full rounded-full"
-                                 style={{ width: `${pctOfMax}%` }}
-                               />
-                             </div>
-                           </div>
-                         );
-                       })}
-                     </div>
-                   </div>
- 
-                   {/* SEVERITY TREND MATRIX CURVE (7 Cols) */}
-                   <div className="lg:col-span-7 bg-slate-950 border border-slate-800/80 rounded-2xl p-5 space-y-4">
-                     <div className="flex justify-between items-center bg-slate-900/40 p-3 rounded-xl border border-slate-900">
+                   
+                   {/* STATUS ENGINE BAR (7 Columns) */}
+                   <div className="lg:col-span-7 bg-slate-950 border border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between space-y-4">
+                     <div className="flex justify-between items-start border-b border-slate-900 pb-3">
                        <div>
-                         <h3 className="font-bold text-white text-xs">Moving Average Defect Severity Curve</h3>
-                         <p className="text-[10px] text-slate-500 font-mono mt-0.5">Average cross-rolling specification limits</p>
+                         <div className="flex items-center gap-1.5">
+                           <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-ping" />
+                           <h3 className="text-[10px] font-mono font-bold tracking-wider text-cyan-400 uppercase">
+                             AI PREDICTIVE MAINTENANCE TELEMETRY
+                           </h3>
+                         </div>
+                         <h4 className="text-sm font-bold text-slate-100 mt-1">Real-time Roller Line Risk Analyst</h4>
                        </div>
-                       <span className="text-[8px] uppercase font-mono text-slate-500 bg-slate-950 px-2 py-0.5 rounded border border-slate-900">LIVE COILS</span>
+
+                       <div className="flex items-center gap-2">
+                         {machineAlertStatus === "GREEN" && (
+                           <span className="bg-emerald-950/40 text-emerald-400 border border-emerald-900/60 font-mono text-[10px] font-bold px-3 py-1 rounded-lg flex items-center gap-1.5 animate-[pulse_2s_infinite]">
+                             <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                             OPERATION STATUS: GREEN (NORMAL)
+                           </span>
+                         )}
+                         {machineAlertStatus === "YELLOW" && (
+                           <span className="bg-amber-950/40 text-amber-400 border border-amber-900/60 font-mono text-[10px] font-bold px-3 py-1 rounded-lg flex items-center gap-1.5">
+                             <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                             OPERATION STATUS: YELLOW (WARNING)
+                           </span>
+                         )}
+                         {machineAlertStatus === "RED" && (
+                           <span className="bg-red-950/50 text-red-400 border border-red-900/60 font-mono text-[10px] font-bold px-3 py-1 rounded-lg flex items-center gap-1.5">
+                             <span className="w-2 h-2 rounded-full bg-red-400 animate-ping absolute" />
+                             <span className="w-2 h-2 rounded-full bg-red-500 relative" />
+                             OPERATION STATUS: RED (MAINTENANCE REQUIRED)
+                           </span>
+                         )}
+                       </div>
                      </div>
 
-                    <div className="w-full aspect-[21/10] bg-slate-950 rounded-xl border border-slate-900 p-4 flex flex-col justify-between">
-                      <svg className="w-full h-full text-cyan-400" viewBox="0 0 500 200">
-                        {/* Grid lines */}
-                        <line x1="40" y1="20" x2="480" y2="20" stroke="#111827" />
-                        <line x1="40" y1="70" x2="480" y2="70" stroke="#111827" />
-                        <line x1="40" y1="120" x2="480" y2="120" stroke="#111827" />
-                        <line x1="40" y1="170" x2="480" y2="170" stroke="#111827" />
-                        
-                        {/* labels */}
-                        <text x="10" y="25" fill="#4b5563" fontSize="9" fontFamily="monospace">90%</text>
-                        <text x="10" y="75" fill="#4b5563" fontSize="9" fontFamily="monospace">60%</text>
-                        <text x="10" y="125" fill="#4b5563" fontSize="9" fontFamily="monospace">30%</text>
-                        <text x="10" y="175" fill="#4b5563" fontSize="9" fontFamily="monospace">0%</text>
+                     {/* BIG STATISTIC GRID */}
+                     <div className="grid grid-cols-3 gap-4 p-4 bg-slate-900/40 rounded-xl border border-slate-900/60 text-center">
+                       
+                       {/* STAT 1: HEALTH SCORE */}
+                       <div className="space-y-1.5 relative">
+                         <span className="text-[9px] uppercase font-mono tracking-wider text-slate-500 block">Machine Health</span>
+                         <div className="flex items-center justify-center gap-2">
+                           <Gauge className={`w-4 h-4 ${machineHealthScore > 80 ? "text-emerald-400" : machineHealthScore > 60 ? "text-amber-400" : "text-red-400"}`} />
+                           <span className="text-2xl font-mono font-bold text-white">
+                             {machineHealthScore}%
+                           </span>
+                         </div>
+                         <div className="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden border border-slate-900">
+                           <div 
+                             className={`h-full rounded-full transition-all duration-300 ${
+                               machineHealthScore > 80 ? "bg-emerald-500" : machineHealthScore > 60 ? "bg-amber-500" : "bg-red-500"
+                             }`}
+                             style={{ width: `${machineHealthScore}%` }}
+                           />
+                         </div>
+                       </div>
 
-                        {/* Spark line accuracy */}
-                        <path
-                          fill="none"
-                          stroke="url(#gradient-anal)"
-                          strokeWidth="3"
-                          strokeLinecap="round"
-                          d="M 40,150 Q 80,120 140,90 T 240,65 T 380,45 T 480,35"
-                        />
+                       {/* STAT 2: FAILURE PROBABILITY */}
+                       <div className="space-y-1.5 relative border-x border-slate-900 px-3">
+                         <span className="text-[9px] uppercase font-mono tracking-wider text-slate-500 block">Failure Probability</span>
+                         <div className="flex items-center justify-center gap-2">
+                           <AlertTriangle className={`w-4 h-4 ${failureProbability > 40 ? (failureProbability > 70 ? "text-red-400" : "text-amber-400") : "text-emerald-400"}`} />
+                           <span className={`text-2xl font-mono font-bold ${failureProbability > 40 ? (failureProbability > 70 ? "text-red-400" : "text-amber-400") : "text-emerald-400"}`}>
+                             {failureProbability}%
+                           </span>
+                         </div>
+                         <span className="text-[8px] font-mono text-slate-500 block uppercase">Expected in 12h horizon</span>
+                       </div>
 
-                        <defs>
-                          <linearGradient id="gradient-anal" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#22d3ee" />
-                            <stop offset="100%" stopColor="#3b82f6" />
-                          </linearGradient>
-                        </defs>
-                      </svg>
-                      
-                      <div className="flex justify-between font-mono text-[9px] text-slate-500 shrink-0 border-t border-slate-900 pt-2">
-                        <span>MILL SEQUENCE 01</span>
-                        <span>MILL SEQUENCE 05</span>
-                        <span>MILL SEQUENCE 10</span>
-                        <span>MILL SEQUENCE 15</span>
-                        <span>MILL SEQUENCE 20 (LATEST)</span>
-                      </div>
-                    </div>
+                       {/* STAT 3: DEFECT REND TREND GROWTH */}
+                       <div className="space-y-1.5">
+                         <span className="text-[9px] uppercase font-mono tracking-wider text-slate-500 block">Defect Rate Growth</span>
+                         <div className="flex items-center justify-center gap-1.5">
+                           <TrendingUp className={`w-4 h-4 ${defectTrendGrowth > 0 ? "text-red-400 rotate-180" : "text-emerald-400"}`} />
+                           <span className={`text-2xl font-mono font-bold ${defectTrendGrowth > 0 ? "text-red-400" : "text-emerald-400"}`}>
+                             {defectTrendGrowth > 0 ? `+${defectTrendGrowth}` : `${defectTrendGrowth}`}%
+                           </span>
+                         </div>
+                         <span className="text-[8px] font-mono text-slate-500 block uppercase">MA vs Historic sequence</span>
+                       </div>
 
-                    <div className="p-3.5 bg-slate-900/30 rounded-xl border border-slate-900 text-xs text-slate-400 leading-relaxed">
-                      Defect classification boundaries converge smoothly. Cross-rolling targets demonstrate a <strong>12.8% decrease in severity spikes</strong> since implementation of the bilateral active preprocessor.
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
+                     </div>
+
+                     {/* SIMULATIVE MAINTENANCE RECOMMENDATION DESK */}
+                     <div className="p-3.5 bg-slate-900/60 border border-slate-900/80 rounded-xl">
+                       <span className="text-[9px] font-mono font-bold uppercase text-slate-400 flex items-center gap-1">
+                         <Wrench className="w-3.5 h-3.5 text-cyan-400" />
+                         <span>AI Predictive Prognostic Insight:</span>
+                       </span>
+                       <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                         {machineAlertStatus === "GREEN" ? (
+                           <span>Continuous casting and roller tension parameters are aligned. Mechanical structures are operating under <strong>safe equilibrium parameters</strong>. Next scheduled inspection log in 124 operating hours.</span>
+                         ) : machineAlertStatus === "YELLOW" ? (
+                           <span className="text-amber-300">
+                             ⚠️ <strong>Medium Fatigue Profile!</strong> Micro-vibrations and thermal gradients exceed optimal margins. Reduce speed by 15% or click <strong>Dampen Line Strain</strong> to preserve structural roller bearings.
+                           </span>
+                         ) : (
+                           <span className="text-red-400 font-bold animate-[pulse_2s_infinite]">
+                             🚨 CRITICAL ALARM STATUS! Thermal overload paired with structural stress is highly correlated with imminent roller scratch surges (+{failureProbability}% error margin). Initiate emergency cooling descaling system flush immediately.
+                           </span>
+                         )}
+                       </p>
+                     </div>
+
+                     {/* ACTIVE ACTION TRIGGERS */}
+                     <div className="flex flex-wrap gap-2 pt-1">
+                       <button
+                         onClick={() => {
+                           setLineStrain(25);
+                           setPdmRollingSpeed(9.2);
+                           setConsoleLogs(prev => [
+                             `[${new Date().toISOString().substring(11,19)}] AI-HMI: Dynamic Roller Strain damping initiated. Speed reduced to 9.2 m/s.`,
+                             ...prev
+                           ]);
+                         }}
+                         className="flex-1 bg-cyan-950/50 hover:bg-cyan-900/70 border border-cyan-800/40 text-cyan-400 px-3 py-2 rounded-lg font-mono text-[10px] uppercase font-bold transition flex items-center justify-center gap-1.5"
+                         title="Safely relax physical roller tensions to normal levels"
+                       >
+                         <Sliders className="w-3.5 h-3.5" />
+                         <span>Dampen Line Strain</span>
+                       </button>
+
+                       <button
+                         onClick={() => {
+                           setMotorTemp(48);
+                           setCoolingForce(105);
+                           setConsoleLogs(prev => [
+                             `[${new Date().toISOString().substring(11,19)}] AI-HMI: Descaling valve high-pressure flush successfully deployed. Motor core temp lowered.`,
+                             ...prev
+                           ]);
+                         }}
+                         className="flex-1 bg-emerald-950/40 hover:bg-emerald-900/60 border border-emerald-900/40 text-emerald-400 px-3 py-2 rounded-lg font-mono text-[10px] uppercase font-bold transition flex items-center justify-center gap-1.5"
+                         title="Deploy hyper-baric scale flushing water"
+                       >
+                         <RefreshCw className="w-3.5 h-3.5" />
+                         <span>Flush Cooling Jet</span>
+                       </button>
+
+                       <button
+                         onClick={() => {
+                           setLineStrain(42);
+                           setMotorTemp(72);
+                           setCoolingForce(85);
+                           setPdmRollingSpeed(12.4);
+                         }}
+                         className="bg-slate-900 hover:bg-slate-800 text-slate-400 px-3 py-2 rounded-lg font-mono text-[10px] uppercase font-bold transition border border-slate-800 flex items-center justify-center"
+                         title="Reset parameters to factory standard specifications"
+                       >
+                         <span>Factory Standard</span>
+                       </button>
+                     </div>
+
+                   </div>
+
+                   {/* CONTROLS SLIDERS PLATFORM (5 Columns) */}
+                   <div className="lg:col-span-5 bg-slate-950 border border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between space-y-4">
+                     <div>
+                       <h3 className="text-[10px] font-mono uppercase tracking-widest text-slate-500 font-bold border-b border-slate-900 pb-2 mb-3.5">
+                         STRESS MULTIPLIER (SIMULATION ENGINE)
+                       </h3>
+                       <p className="text-[11px] text-slate-400 font-sans mb-4">
+                         Adjust live operational factors to test how the AI model predicts thermal fatigue, roller line failures, and future defect counts.
+                       </p>
+
+                       <div className="space-y-4 font-mono text-xs">
+                         
+                         {/* SLIDER A: LINE STRAIN */}
+                         <div className="space-y-1">
+                           <div className="flex justify-between">
+                             <span className="text-slate-400 flex items-center gap-1">
+                               <span>🎚️ Line Strain Coeff.</span>
+                             </span>
+                             <strong className={`${lineStrain > 60 ? "text-amber-400" : "text-cyan-400"}`}>
+                               {lineStrain}%
+                             </strong>
+                           </div>
+                           <input
+                             type="range"
+                             min="15"
+                             max="100"
+                             step="1"
+                             value={lineStrain}
+                             onChange={(e) => setLineStrain(parseInt(e.target.value))}
+                             className="w-full h-1 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                           />
+                           <div className="flex justify-between text-[8px] text-slate-600">
+                             <span>Optimal (20%)</span>
+                             <span>Fatigue Threshold (60%)</span>
+                           </div>
+                         </div>
+
+                         {/* SLIDER B: MOTOR TEMP */}
+                         <div className="space-y-1">
+                           <div className="flex justify-between">
+                             <span className="text-slate-400">🌡️ Motor Core Temperature</span>
+                             <strong className={`${motorTemp > 80 ? "text-red-400" : motorTemp > 65 ? "text-amber-400" : "text-cyan-400"}`}>
+                               {motorTemp}°C
+                             </strong>
+                           </div>
+                           <input
+                             type="range"
+                             min="35"
+                             max="115"
+                             step="1"
+                             value={motorTemp}
+                             onChange={(e) => setMotorTemp(parseInt(e.target.value))}
+                             className="w-full h-1 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                           />
+                           <div className="flex justify-between text-[8px] text-slate-600">
+                             <span>Low (35°C)</span>
+                             <span>Redline limit (90°C)</span>
+                           </div>
+                         </div>
+
+                         {/* SLIDER C: COOLING PSI */}
+                         <div className="space-y-1">
+                           <div className="flex justify-between">
+                             <span className="text-slate-400">💧 Cooling Spray Pressure</span>
+                             <strong className={`${coolingForce < 70 ? "text-red-500" : "text-emerald-400"}`}>
+                               {coolingForce} PSI
+                             </strong>
+                           </div>
+                           <input
+                             type="range"
+                             min="30"
+                             max="130"
+                             step="1"
+                             value={coolingForce}
+                             onChange={(e) => setCoolingForce(parseInt(e.target.value))}
+                             className="w-full h-1 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                           />
+                           <div className="flex justify-between text-[8px] text-slate-600">
+                             <span>Nozzle Clog (45 PSI)</span>
+                             <span>High Yield (110 PSI)</span>
+                           </div>
+                         </div>
+
+                         {/* SLIDER D: ROLLING SPEED */}
+                         <div className="space-y-1">
+                           <div className="flex justify-between">
+                             <span className="text-slate-400">⚡ Roll Sequence Load Speed</span>
+                             <strong className={`${pdmRollingSpeed > 15 ? "text-red-500" : "text-cyan-400"}`}>
+                               {pdmRollingSpeed} m/s
+                             </strong>
+                           </div>
+                           <input
+                             type="range"
+                             min="3"
+                             max="23"
+                             step="0.5"
+                             value={pdmRollingSpeed}
+                             onChange={(e) => setPdmRollingSpeed(parseFloat(e.target.value))}
+                             className="w-full h-1 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                           />
+                           <div className="flex justify-between text-[8px] text-slate-600">
+                             <span>Idling (3 m/s)</span>
+                             <span>Severe Vibration (15 m/s)</span>
+                           </div>
+                         </div>
+
+                       </div>
+                     </div>
+
+                     <div className="bg-slate-900/30 p-2.5 rounded border border-slate-900 text-[10px] text-slate-500 font-mono text-center">
+                       🧠 Failure Neural Model update frequency: <strong>100ms</strong>
+                     </div>
+
+                   </div>
+                 </div>
+
+                 {/* DEFECT TREND FORECAST CURVE (PAST 7 DAYS + NEXT 3 DAYS PREDICTION) */}
+                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                   {/* CHART PLOT (8 Columns) */}
+                   <div className="lg:col-span-8 bg-slate-950 border border-slate-800/80 rounded-2xl p-5 space-y-4">
+                     <div className="flex justify-between items-center">
+                       <div>
+                         <h3 className="text-sm font-bold text-white">7-Day Defect History & Predictive Peak Forecast</h3>
+                         <p className="text-[11px] text-slate-500 font-mono mt-0.5">
+                           Time-series prediction utilizing past data sequences combined with real-time strain coefficients.
+                         </p>
+                       </div>
+                       <span className="text-[8px] uppercase font-mono text-cyan-400 bg-cyan-950/20 px-2.5 py-1 rounded border border-cyan-800/30 animate-pulse">
+                         ARMA+Neural Forecast Active
+                       </span>
+                     </div>
+
+                     {/* SVG GRAPH IMPLEMENTATION */}
+                     {(() => {
+                       const pDays = [
+                         { name: "Mon", count: 52, isForecast: false },
+                         { name: "Tue", count: 61, isForecast: false },
+                         { name: "Wed", count: 55, isForecast: false },
+                         { name: "Thu", count: 59, isForecast: false },
+                         { name: "Fri", count: 71, isForecast: false },
+                         { name: "Sat", count: 51, isForecast: false },
+                         { name: "Sun", count: 35, isForecast: false },
+                         { name: "Mon+", count: Math.round(38 * forecastMultiplier), isForecast: true },
+                         { name: "Tue+", count: Math.round(58 * forecastMultiplier), isForecast: true },
+                         { name: "Wed+", count: Math.round(44 * forecastMultiplier), isForecast: true },
+                       ];
+
+                       const maxLimit = 150;
+                       const graphW = 600;
+                       const graphH = 180;
+                       const padL = 40;
+                       const padR = 20;
+                       const padT = 15;
+                       const padB = 25;
+                       
+                       const plotW = graphW - padL - padR;
+                       const plotH = graphH - padT - padB;
+
+                       const points = pDays.map((d, i) => {
+                         const x = padL + (i / (pDays.length - 1)) * plotW;
+                         const y = padT + plotH - (d.count / maxLimit) * plotH;
+                         return { x, y, ...d };
+                       });
+
+                       const histPoints = points.filter(p => !p.isForecast);
+                       const forecastPoints = points.filter(p => p.isForecast || p.name === "Sun");
+
+                       let histPath = "";
+                       if (histPoints.length > 0) {
+                         histPath = `M ${histPoints[0].x},${histPoints[0].y} ` + 
+                           histPoints.slice(1).map(p => `L ${p.x},${p.y}`).join(" ");
+                       }
+
+                       let forePath = "";
+                       if (forecastPoints.length > 0) {
+                         forePath = `M ${forecastPoints[0].x},${forecastPoints[0].y} ` + 
+                           forecastPoints.slice(1).map(p => `L ${p.x},${p.y}`).join(" ");
+                       }
+
+                       return (
+                         <div className="w-full bg-[#050811] rounded-xl border border-slate-900 p-4">
+                           <div className="relative aspect-[21/8]">
+                             <svg className="w-full h-full" viewBox={`0 0 ${graphW} ${graphH}`}>
+                               <defs>
+                                 <linearGradient id="glow-hist" x1="0%" y1="0%" x2="100%" y2="100%">
+                                   <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.8" />
+                                   <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.8" />
+                                 </linearGradient>
+                                 <linearGradient id="glow-fore" x1="0%" y1="0%" x2="100%" y2="0%">
+                                   <stop offset="0%" stopColor="#ef4444" stopOpacity="0.9" />
+                                   <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.9" />
+                                 </linearGradient>
+                                 <linearGradient id="area-hist" x1="0%" y1="0%" x2="0%" y2="100%">
+                                   <stop offset="0%" stopColor="#0891b2" stopOpacity="0.18" />
+                                   <stop offset="100%" stopColor="#020617" stopOpacity="0.0" />
+                                 </linearGradient>
+                                 <linearGradient id="area-fore" x1="0%" y1="0%" x2="0%" y2="100%">
+                                   <stop offset="0%" stopColor="#ef4444" stopOpacity="0.25" />
+                                   <stop offset="100%" stopColor="#020617" stopOpacity="0.0" />
+                                 </linearGradient>
+                               </defs>
+
+                               {/* Grid lines */}
+                               {[0, 30, 60, 90, 120, 150].map((val) => {
+                                 const y = padT + plotH - (val / maxLimit) * plotH;
+                                 return (
+                                   <g key={val} className="opacity-40">
+                                     <line x1={padL} y1={y} x2={graphW - padR} y2={y} stroke="#111827" strokeWidth="1" />
+                                     <text x={10} y={y + 3} fill="#4b5563" fontSize="8" fontFamily="monospace">
+                                       {val}
+                                     </text>
+                                   </g>
+                                 );
+                               })}
+
+                               {/* Split Line forecasting barrier divider */}
+                               {(() => {
+                                 const dividerX = padL + (6 / (pDays.length - 1)) * plotW;
+                                 return (
+                                   <g>
+                                     <line x1={dividerX} y1={padT} x2={dividerX} y2={padT + plotH} stroke="#ef4444" strokeWidth="1.5" strokeDasharray="4,4" opacity="0.7" />
+                                     <rect x={dividerX - 55} y={padT + 4} width="110" height="15" rx="3" fill="#1e1b4b" stroke="#ef4444" strokeWidth="0.5" opacity="0.8" />
+                                     <text x={dividerX} y={padT + 14} fill="#f87171" fontSize="7" fontFamily="monospace" textAnchor="middle" fontWeight="bold">
+                                       AI FORECAST HORIZON
+                                     </text>
+                                   </g>
+                                 );
+                               })()}
+
+                               {/* Filled Area below curves */}
+                               {histPoints.length > 0 && (
+                                 <path
+                                   d={`M ${histPoints[0].x},${padT + plotH} ` + 
+                                      histPoints.map(p => `L ${p.x},${p.y}`).join(" ") + 
+                                      ` L ${histPoints[histPoints.length - 1].x},${padT + plotH} Z`}
+                                   fill="url(#area-hist)"
+                                 />
+                               )}
+
+                               {forecastPoints.length > 0 && (
+                                 <path
+                                   d={`M ${forecastPoints[0].x},${padT + plotH} ` + 
+                                      forecastPoints.map(p => `L ${p.x},${p.y}`).join(" ") + 
+                                      ` L ${forecastPoints[forecastPoints.length - 1].x},${padT + plotH} Z`}
+                                   fill="url(#area-fore)"
+                                 />
+                               )}
+
+                               {/* Historical Line */}
+                               <path
+                                 d={histPath}
+                                 fill="none"
+                                 stroke="url(#glow-hist)"
+                                 strokeWidth="2.5"
+                                 strokeLinecap="round"
+                               />
+
+                               {/* Forecast Line */}
+                               <path
+                                 d={forePath}
+                                 fill="none"
+                                 stroke="url(#glow-fore)"
+                                 strokeWidth="3.5"
+                                 strokeDasharray="4,3"
+                                 strokeLinecap="round"
+                               />
+
+                               {/* Dot nodes for past */}
+                               {histPoints.map((p, i) => (
+                                 <g key={i} className="group cursor-help">
+                                   <circle cx={p.x} cy={p.y} r="4" fill="#030712" stroke="#22d3ee" strokeWidth="2" />
+                                   <circle cx={p.x} cy={p.y} r="1.5" fill="#ffffff" />
+                                   <text x={p.x} y={p.y - 8} fill="#22d3ee" fontSize="7" fontFamily="monospace" textAnchor="middle" fontWeight="bold" className="opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900 px-1 py-0.5 rounded">
+                                     {p.count}
+                                   </text>
+                                 </g>
+                               ))}
+
+                               {/* Dot nodes for forecast */}
+                               {forecastPoints.slice(1).map((p, i) => (
+                                 <g key={i} className="group cursor-help">
+                                   <circle cx={p.x} cy={p.y} r="5" fill="#030712" stroke="#f59e0b" strokeWidth="2.5" />
+                                   <circle cx={p.x} cy={p.y} r="2" fill="#ef4444" />
+                                   <text x={p.x} y={p.y - 9} fill="#f59e0b" fontSize="8" fontFamily="monospace" textAnchor="middle" fontWeight="bold" className="animate-bounce">
+                                     {p.count}
+                                   </text>
+                                 </g>
+                               ))}
+
+                               {/* Axis Labels */}
+                               {points.map((p, i) => (
+                                 <text key={i} x={p.x} y={graphH - 6} fill={p.isForecast ? "#f87171" : "#8b9bb4"} fontSize="7.5" fontFamily="monospace" textAnchor="middle" fontWeight="normal">
+                                   {p.name}
+                                 </text>
+                               ))}
+                             </svg>
+                           </div>
+
+                           {/* Timeline legends */}
+                           <div className="flex justify-between items-center text-[9px] font-mono border-t border-slate-900 pt-3 text-slate-500">
+                             <div className="flex gap-4">
+                               <span className="flex items-center gap-1.5">
+                                 <span className="w-2.5 h-0.5 bg-cyan-400 inline-block" />
+                                 <span>Past Days Volume</span>
+                               </span>
+                               <span className="flex items-center gap-1.5">
+                                 <span className="w-2.5 h-0.5 bg-red-400 border-dashed border inline-block" />
+                                 <span className="text-red-400 font-bold">Rolling Forecast Spike Index (3 Days)</span>
+                               </span>
+                             </div>
+
+                             <span className="text-[8.5px] text-slate-400">
+                               Predicted defects over next 72 hrs: <strong className="text-red-400">{Math.round((38 + 58 + 44) * forecastMultiplier)} total</strong>
+                             </span>
+                           </div>
+                         </div>
+                       );
+                     })()}
+
+                     <div className="p-3.5 bg-slate-900/30 rounded-xl border border-slate-900 text-xs text-slate-400 leading-relaxed font-sans">
+                       Note: Predictive calculations are automatically optimized utilizing gradient backpropagation correlations mapping physical machine stress to product output defect records.
+                     </div>
+
+                   </div>
+
+                   {/* SHIFT OPERATION DISPOSITION (4 Columns) */}
+                   <div className="lg:col-span-4 bg-slate-950 border border-slate-800/80 rounded-2xl p-5 flex flex-col justify-between space-y-4">
+                     <div>
+                       <div className="flex items-center justify-between border-b border-slate-900 pb-2 mb-3.5">
+                         <h3 className="text-[10px] font-mono uppercase tracking-widest text-[#22d3ee] font-bold">
+                           Shift-wise Defect Volume
+                         </h3>
+                         <span className="text-[8px] font-mono bg-slate-900 px-1.5 py-0.5 rounded text-slate-500">
+                           SEQUENCE COMPARISON
+                         </span>
+                       </div>
+
+                       <p className="text-[11px] text-slate-400 font-sans mb-4">
+                         Analysis of defect occurrence distribution by production shift indexes to pinpoint operational drift anomalies.
+                       </p>
+
+                       {/* SVG comparative Shift bars */}
+                       <div className="bg-[#050811] rounded-xl border border-slate-900/60 p-4 h-[120px] flex items-end justify-around">
+                         
+                         {/* Shift A */}
+                         <div className="flex flex-col items-center gap-1 group w-12">
+                           <span className="text-[9px] font-mono text-slate-400 font-bold">42</span>
+                           <div className="w-5 bg-gradient-to-t from-emerald-600 to-emerald-400 h-10 rounded-t border border-emerald-900 relative">
+                             <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                           </div>
+                           <span className="text-[8px] font-mono text-slate-500 uppercase">A-Morning</span>
+                         </div>
+
+                         {/* Shift B */}
+                         <div className="flex flex-col items-center gap-1 group w-12">
+                           <span className="text-[9px] font-mono text-slate-400 font-bold">78</span>
+                           <div className="w-5 bg-gradient-to-t from-amber-500 to-yellow-400 h-[72px] rounded-t border border-amber-900 relative">
+                             <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                           </div>
+                           <span className="text-[8px] font-mono text-slate-500 uppercase font-bold text-amber-400">B-Evening</span>
+                         </div>
+
+                         {/* Shift C */}
+                         <div className="flex flex-col items-center gap-1 group w-12">
+                           <span className="text-[9px] font-mono text-slate-400 font-bold">112</span>
+                           <div className="w-5 bg-gradient-to-t from-red-600 to-red-400 h-[100px] rounded-t border border-red-900 relative">
+                             <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                           </div>
+                           <span className="text-[8px] font-mono text-slate-500 uppercase font-bold text-red-400">C-Night</span>
+                         </div>
+
+                       </div>
+
+                       <div className="pt-3.5 space-y-1.5 text-[10px] font-mono">
+                         <div className="flex justify-between text-slate-400">
+                           <span>Shift A (06:00 - 14:00)</span>
+                           <span className="text-emerald-450 text-emerald-400 font-bold">42 def. (Compliant)</span>
+                         </div>
+                         <div className="flex justify-between text-slate-400">
+                           <span>Shift B (14:00 - 22:00)</span>
+                           <span className="text-yellow-450 text-yellow-400 font-bold">78 def. (Warning)</span>
+                         </div>
+                         <div className="flex justify-between text-slate-400">
+                           <span>Shift C (22:00 - 06:00)</span>
+                           <span className="text-red-400 font-bold">112 def. (Critical stress)</span>
+                         </div>
+                       </div>
+
+                     </div>
+
+                     <div className="bg-amber-950/20 border border-amber-900/30 p-2.5 rounded-lg text-[9px] text-amber-400 leading-relaxed font-mono">
+                       <strong>💡 SHIFT ANALYTICS DISCOVERY:</strong> Thermal logs demonstrate significant descaler spray blockages during Night hours (Shift C) matching fatigue Redline levels. Lubricant cycles have been re-scheduled.
+                     </div>
+
+                   </div>
+
+                 </div>
+
+                 {/* PREDICTED ANOMALIES & PREVENTIVE SHIELD ACTIVE MODULE */}
+                 <div className="bg-slate-950 border border-slate-800/80 rounded-2xl p-5">
+                   <div className="flex items-center justify-between border-b border-slate-900 pb-3 mb-4">
+                     <div>
+                       <h3 className="font-bold text-slate-100 text-sm">Industrial Fault Diagnostics & Auto-Trigger Scheduler</h3>
+                       <p className="text-xs text-slate-500 mt-0.5 font-mono">
+                         Predictive failure engine monitoring sensor anomalies across downstream rolling mills (Jamshedpur Facility-4)
+                       </p>
+                     </div>
+                     <span className="text-[9px] font-mono text-slate-500 uppercase font-bold bg-slate-900 px-3 py-1 border border-slate-800 rounded">
+                       STATION LINE 04 OK
+                     </span>
+                   </div>
+
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                     {activeAnomalies.map((anom) => {
+                       return (
+                         <div
+                           key={anom.id}
+                           className={`p-4 rounded-xl border flex flex-col justify-between space-y-3 transition-all ${
+                             anom.status === "Resolved" 
+                               ? "bg-slate-900/30 border-slate-900/80 grayscale opacity-60" 
+                               : anom.severity === "HIGH"
+                               ? "bg-[#651c22]/15 border-red-900/60 shadow-[0_0_15px_rgba(239,68,68,0.06)]"
+                               : "bg-amber-950/10 border-amber-900/40"
+                           }`}
+                         >
+                           <div>
+                             <div className="flex justify-between items-center">
+                               <span className="text-[10px] font-bold font-mono text-cyan-400">{anom.id}</span>
+                               <span className={`text-[8px] font-mono px-1.5 py-0.5 rounded font-bold uppercase ${
+                                 anom.status === "Resolved"
+                                   ? "bg-slate-850 text-slate-400 border border-slate-850"
+                                   : anom.severity === "HIGH"
+                                   ? "bg-red-950 text-red-405 text-red-400 border border-red-900/40"
+                                   : "bg-amber-950 text-amber-500 border border-amber-900/30"
+                               }`}>
+                                 {anom.status === "Resolved" ? "RESOLVED" : `${anom.severity} RISK (${anom.probability}%)`}
+                               </span>
+                             </div>
+
+                             <h4 className="text-xs font-bold text-slate-200 mt-2 font-mono">{anom.component}</h4>
+                             <p className="text-[11px] text-slate-400 mt-1 leading-relaxed font-sans">{anom.details}</p>
+                           </div>
+
+                           <div className="pt-2 border-t border-slate-900/40 flex justify-between items-center text-[10px] font-mono">
+                             <span className="text-slate-500">{anom.time}</span>
+                             {anom.status !== "Resolved" ? (
+                               <button
+                                 onClick={() => {
+                                   setActiveAnomalies(prev => prev.map(a => a.id === anom.id ? { ...a, status: "Resolved" } : a));
+                                   setConsoleLogs(prev => [
+                                     `[${new Date().toISOString().substring(11,19)}] AI-HMI: Maintenance trigger dispatched for ${anom.component}. Status resolved.`,
+                                     ...prev
+                                   ]);
+                                 }}
+                                 className={`px-2 py-1 rounded text-[9px] font-bold uppercase transition ${
+                                   anom.severity === "HIGH" 
+                                     ? "bg-red-900/40 text-red-200 hover:bg-red-850/60" 
+                                     : "bg-amber-950 text-amber-400 hover:bg-amber-900"
+                                 }`}
+                               >
+                                 Resolve Anomaly
+                               </button>
+                             ) : (
+                               <span className="text-emerald-400 flex items-center gap-1 font-bold">
+                                 ✓ Micro-wear Stabilised
+                               </span>
+                             )}
+                           </div>
+                         </div>
+                       );
+                     })}
+                   </div>
+
+                 </div>
+
+               </motion.div>
+             )}
 
             {/* 3. INSPECTION HISTORY */}
             {activeTab === "history" && (
@@ -1693,6 +3351,106 @@ export default function App() {
                     </div>
                   )}
                 </div>
+              </motion.div>
+            )}
+
+            {/* 5. DIGITAL TWIN 3D VISUALIZATION */}
+            {activeTab === "twin" && (
+              <motion.div
+                key="twin"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.2 }}
+              >
+                <DigitalTwin
+                  machineHealthScore={machineHealthScore}
+                  failureProbability={failureProbability}
+                  defectTrendGrowth={defectTrendGrowth}
+                  lineStrain={lineStrain}
+                  motorTemp={motorTemp}
+                  coolingForce={coolingForce}
+                  rollingSpeed={pdmRollingSpeed}
+                  selectedClass={selectedClass}
+                  setLineStrain={setLineStrain}
+                  setMotorTemp={setMotorTemp}
+                  setCoolingForce={setCoolingForce}
+                  setPdmRollingSpeed={setPdmRollingSpeed}
+                  setConsoleLogs={setConsoleLogs}
+                />
+              </motion.div>
+            )}
+
+            {/* 6. INDUSTRIAL ROI EXECUTIVE PORTAL */}
+            {activeTab === "control" && (
+              <motion.div
+                key="control"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.2 }}
+              >
+                <FactoryControlCenter />
+              </motion.div>
+            )}
+
+            {activeTab === "roi" && (
+              <motion.div
+                key="roi"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.2 }}
+              >
+                <RoiAnalytics />
+              </motion.div>
+            )}
+
+            {activeTab === "reports" && (
+              <motion.div
+                key="reports"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.2 }}
+              >
+                <IndustrialReportGenerator />
+              </motion.div>
+            )}
+
+            {activeTab === "training" && (
+              <motion.div
+                key="training"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.2 }}
+              >
+                <NeuTrainingHub />
+              </motion.div>
+            )}
+
+            {activeTab === "inference" && (
+              <motion.div
+                key="inference"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.2 }}
+              >
+                <LiveInferenceStation />
+              </motion.div>
+            )}
+
+            {activeTab === "sustainability" && (
+              <motion.div
+                key="sustainability"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.2 }}
+              >
+                <SustainAnalytics />
               </motion.div>
             )}
 

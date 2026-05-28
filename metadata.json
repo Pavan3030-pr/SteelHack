@@ -1,6 +1,6 @@
 {
   "name": "Steel Defect AI",
-  "description": "Industrial Steel Defect Detection System featuring OpenCV preprocessing, PyTorch/ONNX inference, high-performance telemetry, and an interactive dark-themed operator dashboard.",
-  "requestFramePermissions": [],
+  "description": "Industrial Steel Defect Detection System featuring OpenCV preprocessing, high-performance telemetry, real-time 3D Three.js Digital Twin physical simulations, enterprise-grade Executive ROI calculators, interactive automatic report generators, a real NEU Surface Defect PyTorch training workstation, and a dark-themed operator dashboard.",
+  "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
