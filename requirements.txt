@@ -1,0 +1,40 @@
+# ==============================================================================
+# TATA STEEL AI HACKATHON 2026 - MASTER DEPENDENCIES
+# Industrial Steel Defect Detection AI System
+# ==============================================================================
+
+# Core Deep Learning & Inference Engine
+torch>=2.2.0
+torchvision>=0.17.0
+onnx==1.16.1
+onnxruntime==1.17.1
+
+# High-Performance Computer Vision & Augmentations
+opencv-python-headless>=4.9.0.80
+numpy>=1.26.4
+albumentations>=1.4.0
+Pillow>=10.2.0
+
+# FastAPI API Service (High-Performance Async Endpoint)
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+pydantic>=2.6.4
+python-multipart>=0.0.9
+httpx>=0.27.0
+
+# Enterprise Persistence & Async Data Streams
+SQLAlchemy>=2.0.28
+psycopg2-binary>=2.9.9
+asyncpg>=0.29.0
+
+# Streamlit Industrial Telemetry & Operator Dashboard
+streamlit>=1.32.0
+pandas>=2.2.1
+plotly>=5.19.0
+requests>=2.31.0
+
+# Utility & Production Logging
+loguru>=0.7.2
+prometheus-client>=0.20.0
+python-dotenv>=1.0.1
+scikit-learn>=1.4.1.post1

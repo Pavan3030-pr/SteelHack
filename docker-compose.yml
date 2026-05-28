@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # ----------------------------------------------------------------------------
+  # PostgreSQL Logger Database
+  # ----------------------------------------------------------------------------
+  postgres_db:
+    image: postgres:15-alpine
+    container_name: tata_steel_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: tata_admin
+      POSTGRES_PASSWORD: steel_password
+      POSTGRES_DB: steel_defect_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # ----------------------------------------------------------------------------
+  # FastAPI AI Inference Microservice Backend
+  # ----------------------------------------------------------------------------
+  api_backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tata_steel_backend
+    restart: always
+    command: uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://tata_admin:steel_password@postgres_db:5432/steel_defect_db
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    depends_on:
+      - postgres_db
+
+  # ----------------------------------------------------------------------------
+  # Streamlit Operator Dashboard HMI Frontend
+  # ----------------------------------------------------------------------------
+  operator_dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tata_steel_stream_hmi
+    restart: always
+    command: streamlit run frontend/app.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+    environment:
+      - API_URL=http://api_backend:8000/api/v1
+    depends_on:
+      - api_backend
+
+volumes:
+  postgres_data:
