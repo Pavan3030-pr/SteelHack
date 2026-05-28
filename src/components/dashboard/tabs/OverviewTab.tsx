@@ -9,6 +9,10 @@ import {
   Gauge,
   Clock,
   Target,
+  ArrowUpRight,
+  ArrowDownRight,
+  Shield,
+  Cpu,
 } from "lucide-react";
 
 const OverviewTab: React.FC = () => {
@@ -17,272 +21,293 @@ const OverviewTab: React.FC = () => {
     activeAlerts: 3,
     aiAccuracy: 99.2,
     defectRate: 2.4,
-    downtimeReduction: 34.5,
-    monthlySavings: 245000,
   });
+
+  // Simulated real-time counter
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMetrics(prev => ({
+        ...prev,
+        totalInspections: prev.totalInspections + Math.floor(Math.random() * 2)
+      }));
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const kpiCards = [
     {
-      title: "Total Inspections",
+      title: "Throughput",
       value: metrics.totalInspections.toLocaleString(),
+      label: "UNITS SCANNED",
       icon: Activity,
-      color: "text-[#00D26A]",
-      bgColor: "bg-[#00D26A]/10",
-      borderColor: "border-[#00D26A]/30",
-      trend: "+12.5%",
+      trend: "+5.2%",
+      trendUp: true,
+      accent: "text-industrial-accent",
     },
     {
-      title: "Active Alerts",
-      value: metrics.activeAlerts,
+      title: "Active Risk",
+      value: metrics.activeAlerts.toString(),
+      label: "LIVE ANOMALIES",
       icon: AlertCircle,
-      color: "text-[#FF4D4D]",
-      bgColor: "bg-[#FF4D4D]/10",
-      borderColor: "border-[#FF4D4D]/30",
-      trend: "-8.2%",
+      trend: "-12%",
+      trendUp: false,
+      accent: "text-red-500",
     },
     {
-      title: "AI Accuracy",
+      title: "Model Perf",
       value: `${metrics.aiAccuracy}%`,
+      label: "INFERENCE ACCURACY",
       icon: Target,
-      color: "text-[#FF7A00]",
-      bgColor: "bg-[#FF7A00]/10",
-      borderColor: "border-[#FF7A00]/30",
-      trend: "+0.3%",
+      trend: "+0.1%",
+      trendUp: true,
+      accent: "text-industrial-blue",
     },
     {
-      title: "Defect Rate",
+      title: "Defect Ratio",
       value: `${metrics.defectRate}%`,
+      label: "SURFACE INTEGRITY",
       icon: Gauge,
-      color: "text-[#BFC7D5]",
-      bgColor: "bg-[#BFC7D5]/5",
-      borderColor: "border-[#BFC7D5]/20",
-      trend: "-1.8%",
+      trend: "-0.4%",
+      trendUp: false,
+      accent: "text-industrial-success",
     },
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6 },
-    },
-  };
-
   return (
-    <div className="p-8 space-y-8">
-      {/* Header */}
+    <div className="p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto">
+      {/* Header with Glass Effect */}
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-industrial-steel/5 pb-8"
       >
-        <h1 className="text-4xl font-bold font-orbitron text-[#BFC7D5] mb-2">
-          FACTORY INTELLIGENCE
-        </h1>
-        <p className="text-[#BFC7D5]/60 font-mono">
-          Real-time operational metrics and AI-powered insights
-        </p>
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="w-2 h-2 bg-industrial-accent rounded-full animate-pulse" />
+            <span className="text-[10px] font-bold text-industrial-accent uppercase tracking-[0.3em]">Operational Live Stream</span>
+          </div>
+          <h1 className="text-3xl md:text-5xl font-black font-orbitron text-gradient-steel">
+            FACTORY OVERVIEW
+          </h1>
+        </div>
+
+        <div className="flex items-center gap-4 text-right">
+           <div className="hidden sm:block">
+              <div className="text-[10px] font-bold text-industrial-steel/30 uppercase tracking-widest">System Latency</div>
+              <div className="text-xl font-black font-orbitron text-industrial-steel/80">42ms</div>
+           </div>
+           <div className="h-10 w-px bg-industrial-steel/10" />
+           <button className="px-6 py-2.5 bg-industrial-accent text-white text-[10px] font-bold font-orbitron uppercase tracking-widest rounded shadow-[0_0_20px_rgba(255,122,0,0.2)] hover:scale-105 transition-all">
+              Generate Report
+           </button>
+        </div>
       </motion.div>
 
-      {/* KPI Cards */}
-      <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {kpiCards.map((card, i) => {
-          const Icon = card.icon;
-          return (
-            <motion.div
-              key={i}
-              variants={itemVariants}
-              whileHover={{ y: -5 }}
-              className={`p-6 rounded-xl border ${card.borderColor} ${card.bgColor} backdrop-blur-sm hover:shadow-lg transition-all cursor-pointer`}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className={`p-3 rounded-lg ${card.bgColor} border ${card.borderColor}`}>
-                  <Icon className={`w-6 h-6 ${card.color}`} />
-                </div>
-                <span className="text-xs font-bold font-mono text-[#00D26A]">
-                  {card.trend}
-                </span>
+      {/* KPI Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {kpiCards.map((card, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+            className="metallic-surface p-6 rounded-2xl group relative overflow-hidden"
+          >
+            <div className="scanline opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="flex justify-between items-start mb-6">
+              <div className={`p-2.5 rounded-xl bg-industrial-950 border border-industrial-steel/5 text-industrial-steel/40 group-hover:${card.accent} transition-colors duration-500`}>
+                <card.icon className="w-5 h-5" />
               </div>
-              <p className="text-[#BFC7D5]/70 text-sm font-mono mb-1">
-                {card.title}
-              </p>
-              <p className={`text-3xl font-bold font-orbitron ${card.color}`}>
-                {card.value}
-              </p>
-            </motion.div>
-          );
-        })}
-      </motion.div>
+              <div className={`flex items-center gap-1 text-[10px] font-black ${card.trendUp ? 'text-industrial-success' : 'text-red-500'}`}>
+                {card.trendUp ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+                {card.trend}
+              </div>
+            </div>
 
-      {/* Charts Section */}
-      <motion.div
-        className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {/* Defect Distribution */}
+            <div className="space-y-1">
+              <div className="text-xs font-bold text-industrial-steel/30 tracking-widest uppercase">{card.label}</div>
+              <div className="text-3xl font-black font-orbitron text-industrial-steel group-hover:text-industrial-accent transition-colors duration-500">{card.value}</div>
+            </div>
+
+            {/* Micro Chart Mockup */}
+            <div className="mt-6 h-1 w-full bg-industrial-steel/5 rounded-full overflow-hidden">
+               <motion.div
+                 initial={{ width: 0 }}
+                 animate={{ width: card.trendUp ? "70%" : "30%" }}
+                 transition={{ duration: 1.5, delay: 0.5 }}
+                 className={`h-full bg-gradient-to-r from-transparent to-industrial-steel/20`}
+               />
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Real-time Defect Analysis */}
         <motion.div
-          variants={itemVariants}
-          className="lg:col-span-2 p-6 rounded-xl border border-[#FF7A00]/20 bg-[#1A1D24]/50 backdrop-blur-sm"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="lg:col-span-8 metallic-surface rounded-2xl p-8 overflow-hidden relative"
         >
-          <h3 className="text-lg font-bold font-orbitron text-[#BFC7D5] mb-6">
-            DEFECT DISTRIBUTION
-          </h3>
-          <div className="space-y-4">
-            {[
-              { name: "Scratches", value: 34, color: "bg-[#FF7A00]" },
-              { name: "Patches", value: 28, color: "bg-[#FF4D4D]" },
-              { name: "Crazing", value: 18, color: "bg-[#BFC7D5]" },
-              { name: "Pitted Surface", value: 12, color: "bg-[#00D26A]" },
-              { name: "Inclusions", value: 8, color: "bg-[#00D26A]/50" },
-            ].map((defect, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-mono text-[#BFC7D5]/70">
-                    {defect.name}
-                  </span>
-                  <span className="text-sm font-bold text-[#BFC7D5]">
-                    {defect.value}%
-                  </span>
+          <div className="flex items-center justify-between mb-10">
+            <div>
+              <h3 className="text-xl font-bold font-orbitron text-industrial-steel tracking-tight">DEFECT ANALYSIS</h3>
+              <p className="text-xs text-industrial-steel/30 font-bold uppercase tracking-widest mt-1">Multi-Task Model Classification</p>
+            </div>
+            <div className="flex gap-2">
+              {['24h', '7d', '30d'].map((t) => (
+                <button key={t} className={`px-3 py-1 text-[10px] font-bold rounded ${t === '24h' ? 'bg-industrial-accent text-white' : 'text-industrial-steel/40 hover:bg-industrial-steel/5'}`}>{t}</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            {/* Visual Bars */}
+            <div className="space-y-6">
+              {[
+                { name: "Scratches", value: 34, color: "bg-industrial-accent" },
+                { name: "Patches", value: 28, color: "bg-industrial-blue" },
+                { name: "Crazing", value: 18, color: "bg-industrial-steel" },
+                { name: "Pitted Surface", value: 12, color: "bg-industrial-success" },
+                { name: "Inclusions", value: 8, color: "bg-industrial-warning" },
+              ].map((defect, i) => (
+                <div key={i} className="space-y-2">
+                  <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+                    <span className="text-industrial-steel/40">{defect.name}</span>
+                    <span className="text-industrial-steel">{defect.value}%</span>
+                  </div>
+                  <div className="h-2 bg-industrial-950 rounded-full overflow-hidden border border-industrial-steel/5">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${defect.value}%` }}
+                      transition={{ duration: 1, delay: i * 0.1 + 0.5 }}
+                      className={`h-full ${defect.color} opacity-80`}
+                    />
+                  </div>
                 </div>
-                <div className="w-full h-2 bg-[#0F1115]/50 rounded-full overflow-hidden">
-                  <motion.div
-                    className={`h-full ${defect.color}`}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${defect.value}%` }}
-                    transition={{ duration: 1, delay: i * 0.1 }}
-                  />
-                </div>
-              </motion.div>
-            ))}
+              ))}
+            </div>
+
+            {/* Abstract Graphic */}
+            <div className="relative flex items-center justify-center">
+               <div className="absolute inset-0 bg-gradient-to-br from-industrial-accent/5 to-transparent rounded-full blur-3xl" />
+               <div className="relative w-48 h-48 border-8 border-industrial-steel/5 rounded-full flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-4xl font-black font-orbitron text-industrial-steel">98.4</div>
+                    <div className="text-[10px] font-bold text-industrial-steel/30 uppercase tracking-widest">Confidence</div>
+                  </div>
+                  {/* Decorative orbital dots */}
+                  {[...Array(8)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="absolute w-2 h-2 bg-industrial-accent rounded-full"
+                      style={{
+                        transform: `rotate(${i * 45}deg) translateY(-100px)`,
+                        opacity: i % 2 === 0 ? 1 : 0.2
+                      }}
+                    />
+                  ))}
+               </div>
+            </div>
           </div>
         </motion.div>
 
-        {/* System Status */}
+        {/* System Intelligence */}
         <motion.div
-          variants={itemVariants}
-          className="p-6 rounded-xl border border-[#00D26A]/20 bg-[#1A1D24]/50 backdrop-blur-sm"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="lg:col-span-4 metallic-surface rounded-2xl p-8"
         >
-          <h3 className="text-lg font-bold font-orbitron text-[#BFC7D5] mb-6">
-            SYSTEM STATUS
-          </h3>
-          <div className="space-y-4">
+          <h3 className="text-xl font-bold font-orbitron text-industrial-steel tracking-tight mb-8">SYSTEM HEALTH</h3>
+
+          <div className="space-y-8">
             {[
-              { label: "CPU Usage", value: 34, color: "text-[#FF7A00]" },
-              { label: "GPU Usage", value: 28, color: "text-[#BFC7D5]" },
-              { label: "Memory", value: 52, color: "text-[#00D26A]" },
-              { label: "Network", value: 18, color: "text-[#00D26A]" },
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-mono text-[#BFC7D5]/70">
-                    {stat.label}
-                  </span>
-                  <span className={`text-sm font-bold font-mono ${stat.color}`}>
-                    {stat.value}%
-                  </span>
+              { label: "AI Engine", value: 88, icon: Zap, status: "Optimal" },
+              { label: "Edge Node 01", value: 42, icon: Cpu, status: "Active" },
+              { label: "Data Pipeline", value: 94, icon: Shield, status: "Secure" },
+            ].map((node, i) => (
+              <div key={i} className="flex gap-4 group">
+                <div className="w-12 h-12 rounded-xl bg-industrial-950 border border-industrial-steel/10 flex items-center justify-center text-industrial-steel/20 group-hover:text-industrial-accent transition-colors duration-500">
+                  <node.icon className="w-6 h-6" />
                 </div>
-                <div className="w-full h-1.5 bg-[#0F1115]/50 rounded-full overflow-hidden">
-                  <motion.div
-                    className={`h-full ${stat.color.replace("text", "bg")}`}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${stat.value}%` }}
-                    transition={{ duration: 1, delay: i * 0.1 }}
-                  />
+                <div className="flex-1 space-y-2">
+                  <div className="flex justify-between text-xs font-bold uppercase tracking-widest">
+                    <span className="text-industrial-steel/80">{node.label}</span>
+                    <span className="text-industrial-accent">{node.status}</span>
+                  </div>
+                  <div className="h-1 bg-industrial-950 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${node.value}%` }}
+                      transition={{ duration: 1.5, delay: i * 0.2 + 0.8 }}
+                      className="h-full bg-industrial-steel/20"
+                    />
+                  </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
+
+            <div className="pt-4 border-t border-industrial-steel/5 mt-4">
+               <div className="p-4 rounded-xl bg-industrial-accent/5 border border-industrial-accent/10">
+                  <p className="text-[10px] text-industrial-accent font-bold uppercase tracking-widest mb-1">Predictive Maintenance</p>
+                  <p className="text-xs text-industrial-steel/60 leading-relaxed font-light">Next scheduled calibration in 48 operational hours.</p>
+               </div>
+            </div>
           </div>
         </motion.div>
-      </motion.div>
+      </div>
 
-      {/* Recent Activity */}
+      {/* Live Feed / Activity Table */}
       <motion.div
-        variants={itemVariants}
-        className="p-6 rounded-xl border border-[#FF7A00]/20 bg-[#1A1D24]/50 backdrop-blur-sm"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+        className="metallic-surface rounded-2xl overflow-hidden"
       >
-        <h3 className="text-lg font-bold font-orbitron text-[#BFC7D5] mb-6">
-          RECENT ACTIVITY
-        </h3>
-        <div className="space-y-3">
-          {[
-            {
-              time: "14:32",
-              event: "Scratches detected on Coil #4521",
-              severity: "HIGH",
-            },
-            {
-              time: "14:18",
-              event: "Maintenance completed on Line 04",
-              severity: "INFO",
-            },
-            {
-              time: "13:45",
-              event: "AI model accuracy improved to 99.2%",
-              severity: "SUCCESS",
-            },
-            {
-              time: "13:22",
-              event: "Predictive alert: Bearing wear detected",
-              severity: "WARNING",
-            },
-          ].map((activity, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="flex items-center gap-4 p-3 rounded-lg hover:bg-[#0F1115]/50 transition-colors"
-            >
-              <span className="text-xs font-mono text-[#BFC7D5]/50 w-12">
-                {activity.time}
-              </span>
-              <span className="text-sm text-[#BFC7D5]/70 flex-1">
-                {activity.event}
-              </span>
-              <span
-                className={`text-xs font-bold font-mono px-2 py-1 rounded ${
-                  activity.severity === "HIGH"
-                    ? "bg-[#FF4D4D]/20 text-[#FF4D4D]"
-                    : activity.severity === "WARNING"
-                    ? "bg-[#FF7A00]/20 text-[#FF7A00]"
-                    : activity.severity === "SUCCESS"
-                    ? "bg-[#00D26A]/20 text-[#00D26A]"
-                    : "bg-[#BFC7D5]/10 text-[#BFC7D5]"
-                }`}
-              >
-                {activity.severity}
-              </span>
-            </motion.div>
-          ))}
+        <div className="p-6 border-b border-industrial-steel/5 flex justify-between items-center">
+          <h3 className="text-lg font-bold font-orbitron text-industrial-steel uppercase tracking-widest">Live Security Audit</h3>
+          <span className="flex items-center gap-2 text-[10px] font-bold text-industrial-success uppercase tracking-widest">
+            <span className="w-1.5 h-1.5 bg-industrial-success rounded-full animate-pulse" /> Encrypted Connection
+          </span>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b border-industrial-steel/5 text-[10px] font-bold text-industrial-steel/30 uppercase tracking-[0.2em]">
+                <th className="px-8 py-4">Timestamp</th>
+                <th className="px-8 py-4">Asset ID</th>
+                <th className="px-8 py-4">Action</th>
+                <th className="px-8 py-4">Confidence</th>
+                <th className="px-8 py-4 text-right">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-industrial-steel/5">
+              {[
+                { time: "14:32:01", id: "COIL-B293", action: "Surface Classification", conf: "99.8%", status: "CLEAR", color: "text-industrial-success" },
+                { time: "14:31:55", id: "COIL-B292", action: "Anomaly Detected: Scratch", conf: "88.2%", status: "REJECT", color: "text-red-500" },
+                { time: "14:31:42", id: "COIL-B291", action: "Surface Classification", conf: "99.2%", status: "CLEAR", color: "text-industrial-success" },
+                { time: "14:31:28", id: "COIL-B290", action: "Surface Classification", conf: "98.9%", status: "CLEAR", color: "text-industrial-success" },
+              ].map((row, i) => (
+                <tr key={i} className="group hover:bg-industrial-steel/5 transition-colors">
+                  <td className="px-8 py-4 text-xs font-mono text-industrial-steel/40">{row.time}</td>
+                  <td className="px-8 py-4 text-xs font-bold text-industrial-steel">{row.id}</td>
+                  <td className="px-8 py-4 text-xs text-industrial-steel/60">{row.action}</td>
+                  <td className="px-8 py-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-16 h-1 bg-industrial-950 rounded-full overflow-hidden">
+                        <div className="h-full bg-industrial-accent/50" style={{ width: row.conf }} />
+                      </div>
+                      <span className="text-[10px] font-bold text-industrial-steel/40">{row.conf}</span>
+                    </div>
+                  </td>
+                  <td className={`px-8 py-4 text-right text-[10px] font-black tracking-widest ${row.color}`}>{row.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </motion.div>
     </div>

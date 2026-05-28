@@ -8,6 +8,8 @@ import {
   Search,
   ChevronDown,
   Activity,
+  User,
+  Shield,
 } from "lucide-react";
 
 interface TopNavbarProps {
@@ -25,97 +27,72 @@ const TopNavbar: React.FC<TopNavbarProps> = ({
   const [showNotifications, setShowNotifications] = useState(false);
 
   return (
-    <div className="border-b border-[#FF7A00]/10 bg-[#1A1D24]/80 backdrop-blur-sm">
-      <div className="px-6 py-4 flex items-center justify-between">
+    <div className="h-16 border-b border-industrial-steel/5 bg-industrial-900/80 backdrop-blur-md sticky top-0 z-40">
+      <div className="h-full px-6 flex items-center justify-between">
         {/* Left Section */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
           <button
             onClick={onMenuClick}
-            className="lg:hidden p-2 hover:bg-[#0F1115] rounded-lg transition-colors"
+            className="lg:hidden p-2 text-industrial-steel/40 hover:text-industrial-steel hover:bg-industrial-steel/5 rounded-lg transition-all"
           >
-            <Menu className="w-5 h-5 text-[#BFC7D5]" />
+            <Menu className="w-5 h-5" />
           </button>
 
-          {/* Search Bar */}
-          <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0F1115]/50 border border-[#FF7A00]/10 hover:border-[#FF7A00]/30 transition-colors">
-            <Search className="w-4 h-4 text-[#BFC7D5]/50" />
-            <input
-              type="text"
-              placeholder="Search..."
-              className="bg-transparent text-sm text-[#BFC7D5] placeholder:text-[#BFC7D5]/30 focus:outline-none w-40"
-            />
+          {/* Location/Breadcrumb */}
+          <div className="hidden sm:flex items-center gap-3">
+             <div className="w-2 h-2 rounded-full bg-industrial-success animate-pulse" />
+             <div className="text-[10px] font-bold text-industrial-steel/40 uppercase tracking-[0.2em]">Factory-ID: <span className="text-industrial-steel/80">TH-2026-B1</span></div>
           </div>
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center gap-4">
-          {/* System Status */}
-          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0F1115]/50 border border-[#00D26A]/20">
-            <Activity className="w-4 h-4 text-[#00D26A]" />
-            <span className="text-xs font-mono text-[#00D26A]">SYSTEM OK</span>
+        <div className="flex items-center gap-2 md:gap-4">
+          {/* Search Bar - Stylized */}
+          <div className="hidden lg:flex items-center gap-3 px-4 py-1.5 rounded-lg bg-industrial-950/50 border border-industrial-steel/10 focus-within:border-industrial-accent/50 transition-all duration-300">
+            <Search className="w-4 h-4 text-industrial-steel/20" />
+            <input
+              type="text"
+              placeholder="Search assets..."
+              className="bg-transparent text-xs text-industrial-steel placeholder:text-industrial-steel/20 focus:outline-none w-48 font-medium"
+            />
           </div>
 
           {/* Notifications */}
           <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 hover:bg-[#0F1115] rounded-lg transition-colors"
+              className="p-2.5 text-industrial-steel/40 hover:text-industrial-steel hover:bg-industrial-steel/5 rounded-lg transition-all relative"
             >
-              <Bell className="w-5 h-5 text-[#BFC7D5]" />
+              <Bell className="w-5 h-5" />
               {notifications > 0 && (
-                <motion.span
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="absolute top-1 right-1 w-2 h-2 bg-[#FF4D4D] rounded-full"
-                />
+                <span className="absolute top-2 right-2 w-2 h-2 bg-industrial-accent rounded-full ring-2 ring-industrial-900" />
               )}
             </button>
 
-            {/* Notifications Dropdown */}
             <AnimatePresence>
               {showNotifications && (
                 <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="absolute right-0 mt-2 w-80 rounded-lg border border-[#FF7A00]/20 bg-[#1A1D24] shadow-xl z-50"
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="absolute right-0 mt-3 w-80 metallic-surface rounded-xl overflow-hidden z-50 shadow-2xl"
                 >
-                  <div className="p-4 border-b border-[#FF7A00]/10">
-                    <h3 className="font-bold font-orbitron text-[#BFC7D5]">
-                      Notifications
-                    </h3>
+                  <div className="p-4 border-b border-industrial-steel/5 flex justify-between items-center">
+                    <h3 className="text-xs font-bold font-orbitron text-industrial-steel uppercase tracking-widest">Notifications</h3>
+                    <span className="text-[10px] font-bold text-industrial-accent bg-industrial-accent/10 px-2 py-0.5 rounded-full">3 New</span>
                   </div>
-                  <div className="max-h-96 overflow-y-auto">
+                  <div className="max-h-80 overflow-y-auto">
                     {[
-                      {
-                        title: "High Defect Rate",
-                        desc: "Scratches detected on Line 04",
-                        time: "2 min ago",
-                      },
-                      {
-                        title: "Maintenance Alert",
-                        desc: "Scheduled maintenance in 4 hours",
-                        time: "1 hour ago",
-                      },
-                      {
-                        title: "System Update",
-                        desc: "New AI model deployed successfully",
-                        time: "3 hours ago",
-                      },
-                    ].map((notif, i) => (
-                      <div
-                        key={i}
-                        className="p-4 border-b border-[#FF7A00]/5 hover:bg-[#0F1115]/50 transition-colors cursor-pointer"
-                      >
-                        <p className="text-sm font-bold text-[#BFC7D5]">
-                          {notif.title}
-                        </p>
-                        <p className="text-xs text-[#BFC7D5]/60 mt-1">
-                          {notif.desc}
-                        </p>
-                        <p className="text-xs text-[#BFC7D5]/40 mt-2">
-                          {notif.time}
-                        </p>
+                      { title: "Anomaly Detected", desc: "Surface crazing exceeds threshold on Line 4", time: "12m ago", type: "error" },
+                      { title: "Model Optimized", desc: "Edge inference reduced to 42ms", time: "1h ago", type: "success" },
+                      { title: "Shift Start", desc: "Operations supervisor: Jane Smith", time: "2h ago", type: "info" },
+                    ].map((n, i) => (
+                      <div key={i} className="p-4 border-b border-industrial-steel/5 hover:bg-industrial-steel/5 transition-colors cursor-pointer group">
+                        <div className="flex justify-between items-start mb-1">
+                          <span className="text-xs font-bold text-industrial-steel group-hover:text-industrial-accent transition-colors">{n.title}</span>
+                          <span className="text-[10px] text-industrial-steel/20 font-medium">{n.time}</span>
+                        </div>
+                        <p className="text-[11px] text-industrial-steel/40 leading-relaxed">{n.desc}</p>
                       </div>
                     ))}
                   </div>
@@ -124,54 +101,50 @@ const TopNavbar: React.FC<TopNavbarProps> = ({
             </AnimatePresence>
           </div>
 
-          {/* Settings */}
-          <button className="p-2 hover:bg-[#0F1115] rounded-lg transition-colors">
-            <Settings className="w-5 h-5 text-[#BFC7D5]" />
-          </button>
-
-          {/* Profile Menu */}
-          <div className="relative">
+          {/* User Profile */}
+          <div className="relative h-full flex items-center">
             <button
               onClick={() => setShowProfileMenu(!showProfileMenu)}
-              className="flex items-center gap-2 px-3 py-2 hover:bg-[#0F1115] rounded-lg transition-colors"
+              className="flex items-center gap-3 pl-3 pr-1 py-1.5 rounded-full hover:bg-industrial-steel/5 transition-all group border border-transparent hover:border-industrial-steel/10"
             >
-              <div className="w-8 h-8 rounded-lg bg-[#FF7A00]/20 border border-[#FF7A00]/50 flex items-center justify-center">
-                <span className="text-xs font-bold text-[#FF7A00]">JD</span>
+              <div className="text-right hidden sm:block">
+                <div className="text-[10px] font-black text-industrial-steel leading-none">J. DOE</div>
+                <div className="text-[9px] font-bold text-industrial-steel/30 uppercase tracking-tighter">Ops Commander</div>
               </div>
-              <ChevronDown className="w-4 h-4 text-[#BFC7D5]/50" />
+              <div className="w-8 h-8 rounded-full bg-industrial-800 border border-industrial-steel/10 flex items-center justify-center overflow-hidden">
+                <div className="w-full h-full bg-gradient-to-br from-industrial-accent/20 to-industrial-blue/20 flex items-center justify-center">
+                  <User className="w-4 h-4 text-industrial-steel/40" />
+                </div>
+              </div>
             </button>
 
-            {/* Profile Dropdown */}
             <AnimatePresence>
               {showProfileMenu && (
                 <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="absolute right-0 mt-2 w-48 rounded-lg border border-[#FF7A00]/20 bg-[#1A1D24] shadow-xl z-50"
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="absolute right-0 top-full mt-2 w-56 metallic-surface rounded-xl overflow-hidden z-50 shadow-2xl"
                 >
-                  <div className="p-4 border-b border-[#FF7A00]/10">
-                    <p className="text-sm font-bold text-[#BFC7D5]">
-                      John Doe
-                    </p>
-                    <p className="text-xs text-[#BFC7D5]/60">
-                      john@company.com
-                    </p>
+                  <div className="p-4 bg-industrial-800/50 border-b border-industrial-steel/5">
+                    <div className="text-xs font-bold text-industrial-steel">Johnathan Doe</div>
+                    <div className="text-[10px] text-industrial-steel/30 font-mono">ID: SEC-8842-11</div>
                   </div>
-                  <button className="w-full text-left px-4 py-2 text-sm text-[#BFC7D5]/70 hover:bg-[#0F1115]/50 transition-colors flex items-center gap-2">
-                    <Settings className="w-4 h-4" />
-                    Settings
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowProfileMenu(false);
-                      onLogout();
-                    }}
-                    className="w-full text-left px-4 py-2 text-sm text-[#FF4D4D] hover:bg-[#0F1115]/50 transition-colors flex items-center gap-2 border-t border-[#FF7A00]/10"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Logout
-                  </button>
+                  <div className="p-2">
+                    <button className="w-full flex items-center gap-3 px-3 py-2 text-[11px] font-bold text-industrial-steel/60 hover:text-industrial-steel hover:bg-industrial-steel/5 rounded-lg transition-all">
+                      <Shield className="w-4 h-4" /> Security Logs
+                    </button>
+                    <button className="w-full flex items-center gap-3 px-3 py-2 text-[11px] font-bold text-industrial-steel/60 hover:text-industrial-steel hover:bg-industrial-steel/5 rounded-lg transition-all">
+                      <Settings className="w-4 h-4" /> System Preferences
+                    </button>
+                    <div className="my-1 border-t border-industrial-steel/5" />
+                    <button
+                      onClick={onLogout}
+                      className="w-full flex items-center gap-3 px-3 py-2 text-[11px] font-bold text-red-500/80 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
+                    >
+                      <LogOut className="w-4 h-4" /> Terminate Session
+                    </button>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

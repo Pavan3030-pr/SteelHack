@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ArrowLeft, Eye, EyeOff, Mail, Lock, User } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Mail, Lock, User, Zap, Shield, Key } from "lucide-react";
 
 interface AuthPageProps {
   onAuthSuccess: () => void;
@@ -26,278 +26,139 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess, onBackToLanding }) =
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (mode === "login" || mode === "signup") {
-      onAuthSuccess();
-    } else {
-      setMode("login");
-    }
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+    onAuthSuccess();
   };
 
   return (
-    <div className="relative w-full min-h-screen overflow-hidden bg-[#0F1115]">
-      {/* Animated Background */}
-      <div className="fixed inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0F1115] via-[#1A1D24] to-[#0F1115]" />
-        <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(255, 122, 0, 0.1) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255, 122, 0, 0.1) 1px, transparent 1px)
-            `,
-            backgroundSize: "50px 50px",
-          }}
-        />
-        {[...Array(15)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-[#FF7A00] rounded-full"
-            animate={{
-              x: [0, Math.random() * 100 - 50],
-              y: [0, Math.random() * 100 - 50],
-              opacity: [0, 0.3, 0],
-            }}
-            transition={{
-              duration: Math.random() * 3 + 2,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-            }}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-          />
-        ))}
+    <div className="relative w-full min-h-screen overflow-hidden bg-industrial-950 flex flex-col items-center justify-center p-4">
+      {/* Background elements */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 industrial-grid opacity-10" />
+        <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-industrial-accent/5 to-transparent" />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
-        <motion.div
-          className="w-full max-w-md"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative z-10 w-full max-w-lg"
+      >
+        {/* Back Button */}
+        <button
+          onClick={onBackToLanding}
+          className="mb-8 flex items-center gap-2 text-industrial-steel/40 hover:text-industrial-steel transition-colors group"
         >
-          {/* Back Button */}
-          <motion.button
-            variants={itemVariants}
-            onClick={onBackToLanding}
-            className="flex items-center gap-2 text-[#BFC7D5]/60 hover:text-[#FF7A00] transition-colors mb-8"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="text-sm font-mono">Back to Home</span>
-          </motion.button>
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+          <span className="text-[10px] font-bold uppercase tracking-widest font-orbitron">Return to Operations</span>
+        </button>
 
-          {/* Glass Card */}
-          <motion.div
-            variants={itemVariants}
-            className="p-8 rounded-2xl border border-[#FF7A00]/20 bg-[#1A1D24]/60 backdrop-blur-xl shadow-2xl"
-          >
+        {/* Auth Card */}
+        <div className="metallic-surface p-1 rounded-2xl">
+          <div className="bg-industrial-900 rounded-[0.9rem] p-8 md:p-12">
             {/* Header */}
-            <motion.div variants={itemVariants} className="mb-8 text-center">
-              <h2 className="text-3xl font-bold font-orbitron text-[#BFC7D5] mb-2">
-                {mode === "login"
-                  ? "Access Dashboard"
-                  : mode === "signup"
-                  ? "Create Account"
-                  : "Reset Password"}
+            <div className="text-center mb-10">
+              <div className="w-12 h-12 bg-industrial-accent rounded-xl mx-auto mb-6 flex items-center justify-center shadow-[0_0_20px_rgba(255,122,0,0.3)]">
+                <Shield className="w-6 h-6 text-white" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-black font-orbitron text-gradient-steel mb-2">
+                {mode === "login" ? "IDENTITY VERIFICATION" : "ACCOUNT INITIALIZATION"}
               </h2>
-              <p className="text-sm text-[#BFC7D5]/50">
-                {mode === "login"
-                  ? "Enter your credentials to continue"
-                  : mode === "signup"
-                  ? "Join the industrial AI revolution"
-                  : "Enter your email to reset password"}
+              <p className="text-[10px] font-bold text-industrial-steel/30 uppercase tracking-[0.2em]">
+                {mode === "login" ? "Enter protocol credentials" : "Set up secure operator access"}
               </p>
-            </motion.div>
+            </div>
 
-            {/* Form */}
-            <AnimatePresence mode="wait">
-              <motion.form
-                key={mode}
-                onSubmit={handleSubmit}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                className="space-y-4"
-              >
-                {/* Name Field (Signup only) */}
-                {mode === "signup" && (
-                  <motion.div variants={itemVariants}>
-                    <label className="block text-xs font-mono text-[#BFC7D5]/70 mb-2">
-                      Full Name
-                    </label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-3 w-5 h-5 text-[#FF7A00]/50" />
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        placeholder="Your full name"
-                        className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#0F1115]/50 border border-[#FF7A00]/20 text-[#BFC7D5] placeholder:text-[#BFC7D5]/30 focus:outline-none focus:border-[#FF7A00] transition-colors"
-                      />
-                    </div>
-                  </motion.div>
-                )}
-
-                {/* Email Field */}
-                <motion.div variants={itemVariants}>
-                  <label className="block text-xs font-mono text-[#BFC7D5]/70 mb-2">
-                    Email Address
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 w-5 h-5 text-[#FF7A00]/50" />
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {mode === "signup" && (
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-industrial-steel/40 uppercase tracking-widest ml-1">Full Name</label>
+                  <div className="relative group">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-industrial-steel/20 group-focus-within:text-industrial-accent transition-colors" />
                     <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder="you@company.com"
-                      className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#0F1115]/50 border border-[#FF7A00]/20 text-[#BFC7D5] placeholder:text-[#BFC7D5]/30 focus:outline-none focus:border-[#FF7A00] transition-colors"
+                      type="text"
+                      name="name"
+                      required
+                      placeholder="OPERATOR NAME"
+                      className="w-full bg-industrial-950 border border-industrial-steel/10 rounded-xl py-4 pl-12 pr-4 text-sm font-medium focus:outline-none focus:border-industrial-accent/50 transition-all"
                     />
                   </div>
-                </motion.div>
-
-                {/* Password Field */}
-                {mode !== "forgot" && (
-                  <motion.div variants={itemVariants}>
-                    <label className="block text-xs font-mono text-[#BFC7D5]/70 mb-2">
-                      Password
-                    </label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 w-5 h-5 text-[#FF7A00]/50" />
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        name="password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        placeholder="••••••••"
-                        className="w-full pl-10 pr-10 py-3 rounded-lg bg-[#0F1115]/50 border border-[#FF7A00]/20 text-[#BFC7D5] placeholder:text-[#BFC7D5]/30 focus:outline-none focus:border-[#FF7A00] transition-colors"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-3 text-[#BFC7D5]/50 hover:text-[#FF7A00] transition-colors"
-                      >
-                        {showPassword ? (
-                          <EyeOff className="w-5 h-5" />
-                        ) : (
-                          <Eye className="w-5 h-5" />
-                        )}
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
-
-                {/* Confirm Password Field (Signup only) */}
-                {mode === "signup" && (
-                  <motion.div variants={itemVariants}>
-                    <label className="block text-xs font-mono text-[#BFC7D5]/70 mb-2">
-                      Confirm Password
-                    </label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 w-5 h-5 text-[#FF7A00]/50" />
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
-                        onChange={handleInputChange}
-                        placeholder="••••••••"
-                        className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#0F1115]/50 border border-[#FF7A00]/20 text-[#BFC7D5] placeholder:text-[#BFC7D5]/30 focus:outline-none focus:border-[#FF7A00] transition-colors"
-                      />
-                    </div>
-                  </motion.div>
-                )}
-
-                {/* Submit Button */}
-                <motion.button
-                  variants={itemVariants}
-                  type="submit"
-                  className="w-full mt-6 py-3 bg-[#FF7A00] text-white font-bold rounded-lg font-orbitron uppercase tracking-wider hover:shadow-[0_0_30px_rgba(255,122,0,0.5)] transition-all duration-300 group"
-                >
-                  <span className="flex items-center justify-center gap-2">
-                    {mode === "login"
-                      ? "Sign In"
-                      : mode === "signup"
-                      ? "Create Account"
-                      : "Send Reset Link"}
-                  </span>
-                </motion.button>
-              </motion.form>
-            </AnimatePresence>
-
-            {/* Links */}
-            <motion.div
-              variants={itemVariants}
-              className="mt-6 text-center space-y-3 text-sm"
-            >
-              {mode === "login" && (
-                <>
-                  <button
-                    onClick={() => setMode("forgot")}
-                    className="block w-full text-[#BFC7D5]/60 hover:text-[#FF7A00] transition-colors"
-                  >
-                    Forgot password?
-                  </button>
-                  <div className="text-[#BFC7D5]/50">
-                    Don't have an account?{" "}
-                    <button
-                      onClick={() => setMode("signup")}
-                      className="text-[#FF7A00] hover:underline font-bold"
-                    >
-                      Sign up
-                    </button>
-                  </div>
-                </>
-              )}
-
-              {mode === "signup" && (
-                <div className="text-[#BFC7D5]/50">
-                  Already have an account?{" "}
-                  <button
-                    onClick={() => setMode("login")}
-                    className="text-[#FF7A00] hover:underline font-bold"
-                  >
-                    Sign in
-                  </button>
                 </div>
               )}
 
-              {mode === "forgot" && (
-                <button
-                  onClick={() => setMode("login")}
-                  className="block w-full text-[#BFC7D5]/60 hover:text-[#FF7A00] transition-colors"
-                >
-                  Back to login
-                </button>
-              )}
-            </motion.div>
-          </motion.div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-industrial-steel/40 uppercase tracking-widest ml-1">Email Address</label>
+                <div className="relative group">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-industrial-steel/20 group-focus-within:text-industrial-accent transition-colors" />
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    placeholder="name@steelhack.ai"
+                    className="w-full bg-industrial-950 border border-industrial-steel/10 rounded-xl py-4 pl-12 pr-4 text-sm font-medium focus:outline-none focus:border-industrial-accent/50 transition-all"
+                  />
+                </div>
+              </div>
 
-          {/* Footer Note */}
-          <motion.p
-            variants={itemVariants}
-            className="mt-8 text-center text-xs text-[#BFC7D5]/40 font-mono"
-          >
-            This is a demonstration of the premium SteelHack platform UI
-          </motion.p>
-        </motion.div>
-      </div>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center ml-1">
+                  <label className="text-[10px] font-bold text-industrial-steel/40 uppercase tracking-widest">Access Key</label>
+                  {mode === "login" && (
+                    <button type="button" onClick={() => setMode("forgot")} className="text-[9px] font-bold text-industrial-accent/60 hover:text-industrial-accent uppercase tracking-widest">Lost Key?</button>
+                  )}
+                </div>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-industrial-steel/20 group-focus-within:text-industrial-accent transition-colors" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    required
+                    placeholder="••••••••••••"
+                    className="w-full bg-industrial-950 border border-industrial-steel/10 rounded-xl py-4 pl-12 pr-12 text-sm font-medium focus:outline-none focus:border-industrial-accent/50 transition-all"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-industrial-steel/20 hover:text-industrial-steel transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-industrial-accent hover:bg-industrial-accent/90 text-white font-black font-orbitron py-4 rounded-xl shadow-[0_0_30px_rgba(255,122,0,0.2)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 uppercase tracking-[0.2em] text-xs"
+              >
+                {mode === "login" ? "Initialize Session" : "Deploy Account"}
+                <Zap className="w-4 h-4 fill-white" />
+              </button>
+            </form>
+
+            <div className="mt-8 text-center pt-8 border-t border-industrial-steel/5">
+              <p className="text-[10px] font-bold text-industrial-steel/30 uppercase tracking-[0.2em]">
+                {mode === "login" ? "Don't have access?" : "Already have access?"}
+                <button
+                  onClick={() => setMode(mode === "login" ? "signup" : "login")}
+                  className="ml-2 text-industrial-accent hover:text-industrial-accent/80 transition-colors underline underline-offset-4"
+                >
+                  {mode === "login" ? "Request Entry" : "Verification"}
+                </button>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Security Note */}
+        <div className="mt-10 flex items-center justify-center gap-6 opacity-20">
+           <div className="flex items-center gap-2">
+              <Shield className="w-3 h-3" />
+              <span className="text-[8px] font-bold uppercase tracking-widest font-mono">TLS 1.3 Active</span>
+           </div>
+           <div className="flex items-center gap-2">
+              <Key className="w-3 h-3" />
+              <span className="text-[8px] font-bold uppercase tracking-widest font-mono">256-Bit Encrypted</span>
+           </div>
+        </div>
+      </motion.div>
     </div>
   );
 };
