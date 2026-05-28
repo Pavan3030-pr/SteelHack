@@ -142,7 +142,7 @@ export default function SustainAnalytics() {
               <div className="p-1.5 bg-emerald-950/40 rounded text-emerald-400 border border-emerald-900/40">
                 <Leaf className="w-5 h-5 animate-pulse" />
               </div>
-              <h2 className="text-sm font-extrabold uppercase font-mono tracking-wider text-emerald-300">
+              <h2 className="text-sm font-orbitron font-extrabold uppercase tracking-widest text-emerald-300">
                 AI-Driven Industrial ESG & Sustainability Hub
               </h2>
             </div>
@@ -167,7 +167,7 @@ export default function SustainAnalytics() {
         {/* PARAMS SLIDERS (7 Columns) */}
         <div className="lg:col-span-7 bg-[#050b0a] border border-slate-900 rounded-xl p-5 space-y-6 text-left font-mono flex flex-col justify-between">
           <div>
-            <h3 className="text-xs uppercase font-extrabold text-emerald-400 border-b border-emerald-950/80 pb-3 flex items-center gap-2">
+            <h3 className="text-xs font-orbitron uppercase font-bold tracking-widest text-emerald-400 border-b border-emerald-950/80 pb-3 flex items-center gap-2">
               <Workflow className="w-4 h-4" />
               <span>1. Live Factory ESG Modifiers</span>
             </h3>

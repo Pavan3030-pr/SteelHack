@@ -560,6 +560,120 @@ const INITIAL_SCANS = [
   { id: "S-1044", coil: "TC-721-F", defect: "None (OK)", severity: 0.0, confidence: 0.98, speed: "42ms", time: "09:42:55", location: "Center", operator: "OP-12" }
 ];
 
+const BackgroundGridWithParticles = () => {
+  const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
+
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let id: number;
+    let w = (canvas.width = window.innerWidth);
+    let h = (canvas.height = window.innerHeight);
+
+    const pts: Array<{
+      x: number;
+      y: number;
+      sz: number;
+      sx: number;
+      sy: number;
+      op: number;
+    }> = [];
+
+    for (let i = 0; i < 45; i++) {
+      pts.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        sz: Math.random() * 2 + 1,
+        sx: (Math.random() - 0.5) * 0.25,
+        sy: (Math.random() - 0.5) * 0.25,
+        op: Math.random() * 0.4 + 0.15,
+      });
+    }
+
+    const draw = () => {
+      ctx.clearRect(0, 0, w, h);
+      
+      // Radial glow gradient background color matching deep matte dark (#050816)
+      const grad = ctx.createRadialGradient(w / 2, h / 2, 50, w / 2, h / 2, Math.max(w, h));
+      grad.addColorStop(0, "#060a22");
+      grad.addColorStop(0.6, "#040718");
+      grad.addColorStop(1, "#02040e");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+
+      // Draw cybernet grid with custom intervals
+      ctx.strokeStyle = "rgba(0, 229, 255, 0.03)";
+      ctx.lineWidth = 1;
+      const size = 48;
+      for (let x = 0; x < w; x += size) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+      for (let y = 0; y < h; y += size) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+
+      // Render nodes with links if nodes are close
+      pts.forEach((p) => {
+        p.x += p.sx;
+        p.y += p.sy;
+
+        if (p.x < 0) p.x = w;
+        if (p.x > w) p.x = 0;
+        if (p.y < 0) p.y = h;
+        if (p.y > h) p.y = 0;
+
+        ctx.fillStyle = `rgba(0, 229, 255, ${p.op})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.sz, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (p.sz > 2.2) {
+          ctx.shadowColor = "#00e5ff";
+          ctx.shadowBlur = 6;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.sz * 1.2, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(0, 229, 255, ${p.op * 1.5})`;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+      });
+
+      id = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    const handleResize = () => {
+      if (canvas) {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      cancelAnimationFrame(id);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 w-full h-full -z-10 pointer-events-none opacity-90"
+    />
+  );
+};
+
 export default function App() {
   // Navigation tabs matching EXACT user intent: 5 items
   const [activeTab, setActiveTab] = useState<
@@ -1453,43 +1567,54 @@ export default function App() {
   }, [annualTonnage, costPerToneRollback]);
 
   return (
-    <div id="tata_steel_hackathon_dashboard" className="min-h-screen bg-[#030712] text-slate-100 font-sans antialiased overflow-x-hidden selection:bg-cyan-500 selection:text-slate-950">
+    <div id="tata_steel_hackathon_dashboard" className="min-h-screen bg-[#050816] text-[#e0f7ff] font-sans antialiased overflow-x-hidden selection:bg-[#00E5FF] selection:text-slate-950 relative">
       
-      {/* HEADER BAR */}
-      <header className="border-b border-slate-800/80 bg-slate-950/90 px-6 py-4 sticky top-0 z-50 backdrop-blur-md">
+      {/* Dynamic Animated Particles and Tech Gradients */}
+      <BackgroundGridWithParticles />
+
+      {/* Futuristic Grid Layer Overlay & Holo-Scanlines */}
+      <div className="fixed inset-0 pointer-events-none cyber-sans-overlay opacity-[0.03] z-50 cyber-scanline" />
+
+      {/* HEADER BAR REDESIGNED */}
+      <header className="border-b border-[#00e5ff]/20 bg-[#060a1d]/85 px-6 py-4.5 sticky top-0 z-50 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,229,255,0.06)]">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-gradient-to-tr from-cyan-400 to-blue-600 rounded-xl text-slate-950 shadow-md shadow-cyan-500/10">
-              <Flame className="w-6 h-6 animate-pulse" />
+          <div className="flex items-center gap-4.5">
+            <div className="p-2.5 bg-[#00e5ff]/10 border border-[#00e5ff]/35 rounded-xl text-[#00E5FF] shadow-[0_0_15px_rgba(0,229,255,0.25)] relative group overflow-hidden">
+              <div className="absolute inset-0 bg-[#00e5ff]/10 opacity-30 group-hover:scale-125 transition-transform" />
+              <Flame className="w-6.5 h-6.5 animate-pulse relative z-10 text-[#00E5FF]" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs uppercase tracking-widest font-mono font-bold text-cyan-400">TATA STEEL AI HACKATHON 2026</span>
-                <span className="bg-[#10b981]/10 text-emerald-400 border border-[#10b981]/20 text-[9px] font-mono px-2 py-0.5 rounded-full flex items-center gap-1">
+              <div className="flex items-center gap-2.5">
+                <span className="text-[9px] uppercase tracking-widest font-orbitron font-extrabold text-[#00E5FF] bg-[#00e5ff]/10 border border-[#00e5ff]/15 px-2 py-0.5 rounded-sm">
+                  TATA STEEL AI ENTERPRISE
+                </span>
+                <span className="bg-emerald-500/10 text-emerald-450 border border-emerald-500/20 text-[9.5px] font-mono px-2 py-0.5 rounded flex items-center gap-1.5 font-bold">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  ONLINE
+                  STAND-4 ONLINE
                 </span>
               </div>
-              <h1 className="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
-                Industrial Steel Defect Detection System
-                <span className="hidden sm:inline text-xs py-0.5 px-2.5 rounded-md bg-slate-900 border border-slate-800 font-mono text-slate-400">V1.0.0-PROD</span>
+              <h1 className="text-lg md:text-xl font-orbitron font-extrabold tracking-wider text-white uppercase mt-1 flex items-center gap-2">
+                HOLOGRAPHIC DEFECT COGNITION CORE
+                <span className="hidden sm:inline text-[9.5px] py-1 px-2 rounded-md bg-[#00e5ff]/10 border border-[#00e5ff]/25 font-mono text-[#00E5FF] tracking-widest">
+                  SYS.V2-PROD
+                </span>
               </h1>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-mono bg-slate-900 border border-slate-800/80 px-4 py-2 rounded-xl text-slate-400 self-stretch md:self-auto justify-between md:justify-start">
-            <div className="flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-cyan-400" />
-              <span>LOGGED IN AS: <strong className="text-slate-200">OP-44 (Tata Jamshedpur)</strong></span>
+          <div className="flex items-center gap-3 text-[11px] font-mono bg-[#030612]/90 border border-slate-800/80 px-4.5 py-2.5 rounded-xl text-slate-400 self-stretch md:self-auto justify-between md:justify-start shadow-inner">
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-[#00E5FF] animate-pulse" />
+              <span>TERMINAL ID: <strong className="text-white">OP-44 / JAMSHEDPUR_MILL_4</strong></span>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
         
         {/* ==========================================
-            7-ITEM SIDEBAR NAVIGATION MENU
+            7-ITEM SIDEBAR NAVIGATION MENU REDESIGNED
            ========================================== */}
         <nav className="lg:col-span-3 space-y-2">
           {[
@@ -1512,16 +1637,25 @@ export default function App() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`w-full flex items-center justify-between p-3.5 rounded-xl border text-xs font-semibold tracking-wide transition-all ${
+                className={`w-full flex items-center justify-between p-3.5 rounded-xl border text-[11px] font-orbitron uppercase tracking-widest transition-all duration-300 relative overflow-hidden group ${
                   isSelected
-                    ? "bg-slate-900 border-cyan-500 text-cyan-400 shadow-md"
-                    : "bg-teal-950/5 border-slate-800/50 text-slate-400 hover:text-slate-100 hover:border-slate-700/80"
+                    ? "bg-[#00e5ff]/10 border-[#00e5ff] text-[#00E5FF]"
+                    : "bg-[#060a1d]/40 border-slate-900/80 text-slate-400 hover:text-white hover:border-[#00e5ff]/35 hover:bg-[#00e5ff]/5"
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <IconComponent className={`w-4 h-4 ${isSelected ? "text-cyan-400" : "text-slate-400"}`} />
-                  <span>{tab.label}</span>
+                {/* Visual indicator bar at left */}
+                {isSelected && (
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#00E5FF] shadow-[0_0_8px_#00e5ff]" />
+                )}
+                
+                <div className="flex items-center gap-3 relative z-10">
+                  <IconComponent className={`w-4 h-4 transition-colors ${isSelected ? "text-[#00E5FF]" : "text-slate-400 group-hover:text-[#00E5FF]"}`} />
+                  <span className={`${isSelected ? "font-bold tracking-widest" : "font-normal"}`}>{tab.label}</span>
                 </div>
+
+                {isSelected && (
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#00E5FF] shadow-[0_0_8px_#00e5ff] animate-ping" />
+                )}
               </button>
             );
           })}
@@ -1532,22 +1666,24 @@ export default function App() {
            ========================================== */}
         <main className="lg:col-span-9 space-y-6">
 
-          {/* SHARED HIGHLIGHT BANNER */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
+          {/* SHARED HIGHLIGHT BANNER - GLASSMORPHIC REDESIGN */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 p-5 rounded-2xl cyber-glass border border-[#00e5ff]/25 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#00e5ff]/5 to-transparent rounded-bl-full pointer-events-none" />
+            
             <div>
-              <span className="text-[9px] font-mono uppercase text-slate-500 tracking-wider">Detection Accuracy</span>
-              <div className="text-lg font-mono font-bold text-emerald-400 mt-1">96.8%</div>
+              <span className="text-[8.5px] font-orbitron uppercase text-[#00e5ff]/70 tracking-widest block font-medium">Detection Accuracy</span>
+              <div className="text-xl font-orbitron font-black text-emerald-400 mt-1.5 font-bold tracking-wide">96.8%</div>
             </div>
             <div>
-              <span className="text-[9px] font-mono uppercase text-slate-500 tracking-wider">Average Inference Latency</span>
-              <div className="text-lg font-mono font-bold text-cyan-400 mt-1">{simulatedMetrics.avgLatency} ms</div>
+              <span className="text-[8.5px] font-orbitron uppercase text-[#00e5ff]/70 tracking-widest block font-medium">Avg Cycle Latency</span>
+              <div className="text-xl font-orbitron font-black text-[#00E5FF] mt-1.5 font-bold tracking-wide">{simulatedMetrics.avgLatency} ms</div>
             </div>
             <div>
-              <span className="text-[9px] font-mono uppercase text-slate-500 tracking-wider">Total Inspections</span>
-              <div className="text-lg font-mono font-bold text-white mt-1">{simulatedMetrics.scansProcessed}</div>
+              <span className="text-[8.5px] font-orbitron uppercase text-[#00e5ff]/70 tracking-widest block font-medium">Processed Bulks</span>
+              <div className="text-xl font-orbitron font-black text-white mt-1.5 font-bold tracking-wide">{simulatedMetrics.scansProcessed}</div>
             </div>
             <div>
-              <span className="text-[9px] font-mono uppercase text-slate-500 tracking-wider">Defect Detection Rate</span>
+              <span className="text-[8.5px] font-orbitron uppercase text-[#00e5ff]/70 tracking-widest block font-medium">Line Anomalies</span>
               <div className="text-lg font-mono font-bold text-red-400 mt-1">
                 {((simulatedMetrics.scansDefect / simulatedMetrics.scansProcessed) * 100).toFixed(1)}%
               </div>
