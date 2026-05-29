@@ -1,125 +1,155 @@
-# ⚙️ Industrial Steel Defect Detection AI System
+# 🦾 SteelHack: Autonomous Steel Quality Intelligence
 
-### **Tata Steel AI Hackathon 2026 - Master Submission (FIRST-PLACE LEVEL)**
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![React](https://img.shields.io/badge/Frontend-React%2019-blue)](https://react.dev/)
+[![FastAPI](https://img.shields.io/badge/Backend-FastAPI-green)](https://fastapi.tiangolo.com/)
+[![Tailwind](https://img.shields.io/badge/Styling-Tailwind%204.0-38bdf8)](https://tailwindcss.com/)
+[![Industry 4.0](https://img.shields.io/badge/Industry-4.0-orange)](https://en.wikipedia.org/wiki/Fourth_Industrial_Revolution)
+
+> **Premium Industrial Intelligence Platform for Real-Time Steel Surface Inspection & Predictive Maintenance.**
+
+SteelHack is a high-throughput, AI-powered industrial platform designed for the Tata Steel AI Hackathon. It leverages deep learning at the edge to detect surface defects with sub-50ms latency, providing actionable insights for factory-wide operational excellence.
 
 ---
 
-## 🚀 Executive Summary
-Manual steel plate inspection exhibits an average **20% escape rate** due to high-speed line operations, physical glare, and human optical fatigue. Escape faults damage downstream flattening rollers, costing factories thousands in scrap downtime.
+## 📸 Screenshots
 
-This software delivers an **industry-grade, high-throughput, edge-deployable Computer Vision & multi-task Deep Learning System** designed to inspect steel rolls in real-time. By pairing localized **OpenCV filtering pipelines** with a unified **Multi-Task Neural Network (ResNet)**, the system simultaneously processes **classification (6 defect categories)** and **severity ratio calculations** in under **50ms**.
+| Landing Page (Cinematic) | Industrial Dashboard | Live Monitoring |
+| :--- | :--- | :--- |
+| ![Landing Placeholder](assets/screenshots/landing_mockup.png) | ![Dashboard Placeholder](assets/screenshots/dashboard_mockup.png) | ![Monitoring Placeholder](assets/screenshots/monitoring_mockup.png) |
+
+*(Note: Add actual screenshots to `assets/screenshots/` for final submission)*
 
 ---
 
-## 🏗️ Industrial System Architecture
+## 🏗️ System Architecture
+
+```mermaid
+graph TD
+    subgraph "Edge Devices (Factory Floor)"
+        C1[High-Speed Camera 1] --> EN1[Edge Node 01]
+        C2[High-Speed Camera 2] --> EN1
+    end
+
+    subgraph "ML Engine (Local Processing)"
+        EN1 --> INF[Inference Engine - ONNX]
+        INF --> CLAS[Defect Classifier]
+        INF --> SEV[Severity Analyzer]
+    end
+
+    subgraph "Core Platform"
+        INF --> API[FastAPI Gateway]
+        API --> DB[(SQL Audit Trail)]
+        API --> WS[WebSocket Stream]
+    end
+
+    subgraph "Frontend (Control Room)"
+        WS --> UI[Premium React Dashboard]
+        UI --> ANALY[Predictive Analytics]
+    end
 ```
-                                +---------------------------+
-                                |  Steel Image Input Feed   |
-                                +---------------------------+
-                                              |
-                                              v
-                                +---------------------------+
-                                | OpenCV Prep Pipeline      |
-                                | - Bilateral Noise filter  |
-                                | - Adaptive CLAHE Enhancer |
-                                +---------------------------+
-                                              |
-                                              v
-                                +---------------------------+
-                                | Multi-Task Deep Model     |
-                                | - ResNet Feature Extractor|
-                                | - Class Head (CE Loss)    |
-                                | - Severity Head (MSE)     |
-                                +---------------------------+
-                                              |
-                                 +------------+------------+
-                                 |                         |
-                                 v                         v
-                       +-------------------+     +--------------------+
-                       | ONNX Edge Export  |     | PostgreSQL Logger  |
-                       | - CUDA TRT Engine |     | - SQLAlchemy Orm   |
-                       +-------------------+     +--------------------+
+
+---
+
+## 🛠️ Project Structure
+
+```text
+SteelHack/
+├── client/              # React 19 + Tailwind 4 Frontend
+│   ├── src/             # Industrial UI Components & Logic
+│   └── public/          # Static Assets
+├── server/              # FastAPI Backend
+│   └── app/             # API Routes & Database Schema
+├── ml_engine/           # Machine Learning Pipeline
+│   ├── model.py         # Torch/ONNX Model Definitions
+│   └── train.py         # Training Scripts
+├── scripts/             # Deployment & Docker Configs
+├── assets/              # Branding & Screenshots
+└── docs/                # Extended Documentation
 ```
 
 ---
 
-## 🛠️ Unified Target Defect Classes (NEU Surface Database)
-1. **Crazing**: Shallow networks of dense hairline fractures.
-2. **Inclusion**: Embedded dark non-metallic impurities.
-3. **Patches**: Broad uneven oxide scale discolorations.
-4. **Pitted Surface**: Pockets of microscopically small cavities.
-5. **Rolled-in Scale**: Heavy coarse iron layers pressed parallel during rolling.
-6. **Scratches**: Longitudinal linear lines caused by mechanical mechanical abrasion.
+## ⚡ Quick Start
+
+### Prerequisites
+- Node.js 20+
+- Python 3.10+
+- Docker (optional)
+
+### Installation
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/Pavan3030-pr/SteelHack.git
+   cd SteelHack
+   ```
+
+2. **Environment Setup**
+   ```bash
+   cp .env.example .env
+   ```
+
+3. **Frontend Setup**
+   ```bash
+   cd client
+   npm install
+   npm run dev
+   ```
+
+4. **Backend Setup**
+   ```bash
+   cd server
+   pip install -r requirements.txt
+   uvicorn app.main:app --reload
+   ```
 
 ---
 
-## 📦 Fast-Track Setup Steps
+## 🔑 Demo Credentials
 
-### 1. Direct Multi-Service Deployment (Recommended)
-You can build and trigger the database, FastAPI, and HMI Streamlit dashboard in a single command using Docker:
+| Role | Email | Password |
+| :--- | :--- | :--- |
+| **Ops Commander** | `admin@steelhack.ai` | `tata-steel-2024` |
+| **Shift Lead** | `operator@steelhack.ai` | `op-secure-access` |
+
+---
+
+## 📡 API Documentation
+
+SteelHack exposes a RESTful API with real-time WebSocket support for telemetry.
+
+- **Docs URL**: `http://localhost:8000/docs` (Swagger)
+- **Base Endpoint**: `/api/v1`
+- **Key Routes**:
+    - `POST /audit/inspect`: Submit image for AI classification.
+    - `GET /telemetry/live`: WebSocket for live factory metrics.
+    - `GET /analytics/severity`: Retrieve defect distribution reports.
+
+---
+
+## 🚢 Deployment
+
+### Using Docker
 ```bash
+cd scripts
 docker-compose up --build
 ```
-* Once active, access the operator HMI Dashboard at `http://localhost:8501` and explore API endpoints at `http://localhost:8000/docs`.
-
-### 2. Manual Local Installation
-If you prefer running modules natively:
-
-```bash
-# Setup virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install high-performance package stack
-pip install -r requirements.txt
-
-# Launch FastAPI ASGI Worker
-uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
-
-# Launch Streamlit Operator Board (In a separate terminal)
-streamlit run frontend/app.py --server.port 8501
-```
 
 ---
 
-## 🏃 Testing & Runtime Execution Commands
-
-### 1. Test Model Training & Snaphots
-Run the local simulated training routine to evaluate epoch metrics, AdamW optimizations, and loss curves:
-```bash
-python ml/train.py
-```
-
-### 2. Export Model to ONNX Edge Schema
-Compile and trace your weights into portable ONNX structures:
-```bash
-python ml/export.py
-```
-
-### 3. Verify Computer Vision Pipeline Standalone
-Run OpenCV filters with localized sample generators:
-```bash
-python ml/preprocess.py
-```
+## 🤝 Contributing
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ---
 
-## 🎯 Winning Pitch Script (Tata Steel Jury Presentation)
-
-### **Slide 1: The High-Cost Escape Problem (0:30s)**
-"Good morning, judges. In high-speed steel manufacturing, manual inspection has an escape rate of nearly 20%. When an oxide inclusion or a scratch slips through, it can fracture downstream rolling rollers, causing equipment failure. Traditional AI models only output labels; they do not estimate how much of the surface area is physically compromised."
-
-### **Slide 2: The Two-Stage Multi-Task Architecture (1:15s)**
-"Our solution is built for heavy industry. By separating operations, we save CPU. Stage 1 applies Bilateral Edge-Saving Filters and CLAHE contrast equalization, stripping out water droplets or metallic flakes. Stage 2 runs a single Multi-Task CNN. Instead of running separate models, our network simultaneously predicts the Defect Class and the exact Surface area Severity percentage in just 48 milliseconds."
-
-### **Slide 3: Business Value and Scalability (1:00s)**
-"This system is deployment-ready. Compiled to ONNX Runtime graphs, it deploys directly onto industrial hardware. For Tata Steel, this translates to a 15% drop in steel sheet rollback waste, immediate roller wear indicators, and real-time operational telemetry. Thank you."
+## ⚖️ License
+Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-## 📄 High-Impact Resume Bullet Points
-* **Industrial AI Architect & ML Engineer**:
-  * Designed and deployed an end-to-end Computer Vision & Deep Learning Inspection System classifying 6 steel surface defect classes, achieving a **96.8% mean classification accuracy**.
-  * Optimized model latency from 150ms to **48ms** by transitioning trained PyTorch ResNet CNN graphs to **ONNX Runtime** targeting Nvidia TensorRT deployment.
-  * Formulated a **Multi-Task Learning Network** incorporating cross-entropy classification losses with Smooth L1 regression heads to estimate defect surface area percentages simultaneously.
-  * Built an asynchronous logging pipeline using **FastAPI** and **SQLAlchemy/PostgreSQL** with Docker Compose orchestration to handle high-throughput edge camera feeds under heavy industrial loads.
+**Handcrafted with precision for the Tata Steel AI Hackathon 2024.**
